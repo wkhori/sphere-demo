@@ -124,7 +124,6 @@ export function AccountsTable({
                   className={cn(
                     onSelectAccount ? "cursor-pointer" : "cursor-default",
                   )}
-                
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">

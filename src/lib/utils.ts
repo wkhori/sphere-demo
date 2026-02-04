@@ -52,7 +52,6 @@ export function formatAmount(amount: number, currency: PayoutCurrency): string {
   return `${amount.toLocaleString()} ${currency.toUpperCase()}`;
 }
 
-
 export function formatSeconds(seconds: number) {
   return `0:${String(seconds).padStart(2, "0")}`;
 }

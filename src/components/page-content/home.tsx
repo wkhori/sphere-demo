@@ -16,6 +16,7 @@ import {
   mockAccounts,
   mockHomeActivity,
   mockHomeSummary,
+  mockUserProfile,
 } from "@/lib/mock-data";
 import { AssetIcon } from "@/components/ui/asset-icon";
 import { ArrowUpRightIcon } from "@/components/ui/arrow-up-right";
@@ -56,11 +57,11 @@ export function HomeContent({
         <div>
           <h1 className="text-2xl font-bold">
             <TextEffect preset="fade" per="word">
-              {`Welcome back, ${mockHomeSummary.userName} 👋`}
+              {`Welcome back, ${mockUserProfile.name} 👋`}
             </TextEffect>
           </h1>
           <p className="text-muted-foreground">
-            {mockHomeSummary.organization} • {mockHomeSummary.plan}
+            {mockUserProfile.organization} • {mockUserProfile.plan}
           </p>
         </div>
       </div>
@@ -100,7 +101,7 @@ export function HomeContent({
               <p className="text-muted-foreground text-sm">Recipients</p>
               <p className="text-2xl font-semibold">{recipientCount}</p>
               <p className="text-muted-foreground text-xs">
-                Approved payees on file
+                Received money this year
               </p>
             </div>
           </div>

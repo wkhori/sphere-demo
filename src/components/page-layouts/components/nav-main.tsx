@@ -64,7 +64,10 @@ export function NavMain({
                 isActive={activeItem === item.title}
               >
                 {onSelect ? (
-                  <button type="button" onClick={() => handleSelect(item.title)}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(item.title)}
+                  >
                     <item.icon />
                     <span>{item.title}</span>
                   </button>
