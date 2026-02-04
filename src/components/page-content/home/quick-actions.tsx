@@ -11,7 +11,7 @@ import type { CalendarDaysIconHandle } from "@/components/ui/calendar-days";
 import type { RefreshCWIconHandle } from "@/components/ui/refresh-cw";
 import { formatAmount } from "@/lib/utils";
 import type { HomeActivity } from "@/lib/types";
-import type { RepeatPrefill } from "./home-types";
+import type { RepeatPrefill } from "./types";
 
 type QuickActionsCardProps = {
   onNavigate: (view: "send" | "accounts") => void;

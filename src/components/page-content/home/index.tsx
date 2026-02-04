@@ -13,9 +13,9 @@ import {
 } from "@/lib/mock-data";
 import { convertAmount } from "@/lib/send-money/amounts";
 import type { Account, HomeActivity } from "@/lib/types";
-import type { RepeatPrefill } from "./home-types";
-import { RecentActivityCard } from "./home-recent-activity";
-import { QuickActionsCard } from "./home-quick-actions";
+import type { RepeatPrefill } from "./types";
+import { RecentActivityCard } from "./recent-activity";
+import { QuickActionsCard } from "./quick-actions";
 
 const findAccountByName = (accounts: Account[], target: string) =>
   accounts.find(
