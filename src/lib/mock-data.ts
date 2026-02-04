@@ -4,6 +4,7 @@ import {
   HomeSummary,
   PayoutCurrency,
   PayoutNetwork,
+  UserProfile,
 } from "./types";
 
 // MOCK ACCOUNTS
@@ -182,9 +183,6 @@ export const mockAccounts: Account[] = [
 
 // Home page mock data
 export const mockHomeSummary: HomeSummary = {
-  userName: "John Doe",
-  organization: "MoneyX Business",
-  plan: "Enterprise",
   monthlyTransferred: 12450,
   lastMonthTransferred: 10320,
 };
@@ -231,3 +229,15 @@ export const mockHomeActivity: HomeActivity[] = [
     network: PayoutNetwork.POLYGON,
   },
 ];
+
+export const mockUserProfile: UserProfile = {
+  name: "John Doe",
+  initials: "JD",
+  organization: "MoneyX",
+  plan: "Enterprise",
+  email: "jdoe@moneyx.com",
+  kybStatus: "Verified",
+  kybVerifiedAt: new Date("2024-01-20"),
+  customerId: "customer_916725ea2ed34acbab9b8b92b9802284",
+  phone: "+1 777-777-7777",
+};

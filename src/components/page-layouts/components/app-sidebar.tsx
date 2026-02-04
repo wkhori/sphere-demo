@@ -2,7 +2,13 @@
 
 import type { ComponentProps } from "react";
 
-import { ArrowUpRight, BadgeDollarSign, Home, Landmark } from "lucide-react";
+import {
+  ArrowUpRight,
+  BadgeDollarSign,
+  Home,
+  Landmark,
+  MoreHorizontal,
+} from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import {
@@ -15,6 +21,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { mockUserProfile } from "@/lib/mock-data";
 
 const data = {
   navMain: [
@@ -76,9 +83,16 @@ export function AppSidebar({
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <BadgeDollarSign className="size-4" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">John Doe</span>
-                  <span className="truncate text-xs">MoneyX</span>
+                <div className="flex flex-1 items-center gap-2 text-left text-sm leading-tight">
+                  <div className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">
+                      {mockUserProfile.name}
+                    </span>
+                    <span className="block truncate text-xs">
+                      {mockUserProfile.organization}
+                    </span>
+                  </div>
+                  <MoreHorizontal className="size-4 shrink-0 text-muted-foreground" />
                 </div>
               </button>
             </SidebarMenuButton>

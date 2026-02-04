@@ -207,9 +207,6 @@ export interface Account {
 
 // Home Page types
 export type HomeSummary = {
-  userName: string;
-  organization: string;
-  plan: string;
   monthlyTransferred: number;
   lastMonthTransferred: number;
 };
@@ -224,4 +221,16 @@ export type HomeActivity = {
   type: "bank" | "crypto";
   bankName?: string;
   network?: PayoutNetwork;
+};
+
+export type UserProfile = {
+  name: string;
+  initials: string;
+  organization: string;
+  plan: string;
+  email: string;
+  kybStatus: "Verified" | "Pending" | "Unverified";
+  kybVerifiedAt?: Date;
+  customerId: string;
+  phone: string;
 };
