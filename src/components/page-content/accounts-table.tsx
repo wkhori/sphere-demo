@@ -66,12 +66,12 @@ export function AccountsTable({
   const [filter, setFilter] = React.useState<FilterState>("all");
 
   const filteredAccounts = React.useMemo(() => {
+    if (filter === "all") return mockAccounts;
     return mockAccounts.filter((account) => {
-      if (filter === "self") return account.ownership === "self";
-      if (filter === "recipient") return account.ownership === "recipient";
-      if (filter === "bank") return account.type === "bank";
-      if (filter === "crypto") return account.type === "crypto";
-      return true;
+      if (filter === "self" || filter === "recipient") {
+        return account.ownership === filter;
+      }
+      return account.type === filter;
     });
   }, [filter]);
 
