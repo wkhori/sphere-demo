@@ -22,5 +22,5 @@ npm run dev
 
 ## UI Inspiration
 
-- Consumer + Enterprise Fintech: https://wise.com
+- Consumer + Enterprise Fintech: https://wise.com, https://wise.design/
 - Dashboard block reference: https://bundui.io/
