@@ -12,6 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -47,6 +48,15 @@ export function AppSidebar({
   onNavSelect?: (title: string) => void;
   activeNav?: string;
 }) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleProfileSelect = () => {
+    onProfileSelect?.();
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarContent>
@@ -62,7 +72,7 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" isActive={isProfileActive} asChild>
-              <button type="button" onClick={onProfileSelect}>
+              <button type="button" onClick={handleProfileSelect}>
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <BadgeDollarSign className="size-4" />
                 </div>

@@ -16,6 +16,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 export function NavMain({
@@ -36,6 +37,21 @@ export function NavMain({
   onSelect?: (title: string) => void;
   activeItem?: string;
 }) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleSelect = (title: string) => {
+    onSelect?.(title);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <SidebarGroup>
       <SidebarMenu className="pt-15">
@@ -48,12 +64,12 @@ export function NavMain({
                 isActive={activeItem === item.title}
               >
                 {onSelect ? (
-                  <button type="button" onClick={() => onSelect(item.title)}>
+                  <button type="button" onClick={() => handleSelect(item.title)}>
                     <item.icon />
                     <span>{item.title}</span>
                   </button>
                 ) : (
-                  <a href={item.url}>
+                  <a href={item.url} onClick={handleLinkClick}>
                     <item.icon />
                     <span>{item.title}</span>
                   </a>
@@ -72,7 +88,7 @@ export function NavMain({
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
+                            <a href={subItem.url} onClick={handleLinkClick}>
                               <span>{subItem.title}</span>
                             </a>
                           </SidebarMenuSubButton>
