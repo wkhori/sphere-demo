@@ -99,86 +99,90 @@ export function AccountSelectCard({
     <Card className="flex-1 w-full border-0 bg-transparent shadow-none py-0 gap-0">
       <CardContent className="p-0">
         <div className="flex h-full flex-col p-2">
-        <p className="text-muted-foreground text-xs">{label}</p>
-        <div className="mt-2 grid gap-2 grid-cols-[minmax(0,3fr)_minmax(0,1fr)] items-start">
-          <div className="min-w-0">
-            <Select
-              value={value?.id ?? ""}
-              onValueChange={(selected) => {
-                const next = groups
-                  .flatMap((group) => group.accounts)
-                  .find((account) => account.id === selected);
-                onChange(next ?? null);
-              }}
-            >
-              <SelectTrigger className="h-10 w-full py-0 cursor-pointer text-left border-border/40 min-w-0">
-                {value ? (
-                  <AccountOption account={value} compact />
-                ) : (
-                  <span className="text-muted-foreground text-sm block w-full">
-                    {placeholder}
-                  </span>
-                )}
-              </SelectTrigger>
-              <SelectContent>
-                {groups.map((group, index) => (
-                  <React.Fragment key={group.label}>
-                    {index > 0 ? <Separator className="my-2" /> : null}
-                    <SelectGroup>
-                      <SelectLabel>{group.label}</SelectLabel>
-                      {group.accounts.map((account) => (
-                        <SelectItem key={account.id} value={account.id}>
-                          <AccountOption account={account} />
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </React.Fragment>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-0 min-w-0">
-            {!value ? (
-              <div className="h-10 w-full rounded-md bg-muted/20" />
-            ) : isCrypto ? (
+          <p className="text-muted-foreground text-xs">{label}</p>
+          <div className="mt-2 grid gap-2 grid-cols-[minmax(0,3fr)_minmax(0,1fr)] items-start">
+            <div className="min-w-0">
               <Select
-                value={currency ?? ""}
-                onValueChange={(next) =>
-                  onCurrencyChange?.(next as PayoutCurrency)
-                }
+                value={value?.id ?? ""}
+                onValueChange={(selected) => {
+                  const next = groups
+                    .flatMap((group) => group.accounts)
+                    .find((account) => account.id === selected);
+                  onChange(next ?? null);
+                }}
               >
-                <SelectTrigger className="h-10 w-full border-border/40 min-w-0">
-                  {currency ? (
-                    <CurrencyOption currency={currency} />
+                <SelectTrigger className="h-10 w-full py-0 cursor-pointer text-left border-border/40 min-w-0">
+                  {value ? (
+                    <AccountOption account={value} compact />
                   ) : (
-                    <span className="text-sm text-muted-foreground">
-                      Currency
+                    <span className="text-muted-foreground text-sm block w-full">
+                      {placeholder}
                     </span>
                   )}
                 </SelectTrigger>
                 <SelectContent>
-                  {cryptoCurrencies.map((crypto) => (
-                    <SelectItem key={crypto} value={crypto}>
-                      <CurrencyOption currency={crypto} />
-                    </SelectItem>
+                  {groups.map((group, index) => (
+                    <React.Fragment key={group.label}>
+                      {index > 0 ? <Separator className="my-2" /> : null}
+                      <SelectGroup>
+                        <SelectLabel>{group.label}</SelectLabel>
+                        {group.accounts.map((account) => (
+                          <SelectItem key={account.id} value={account.id}>
+                            <AccountOption account={account} />
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </React.Fragment>
                   ))}
                 </SelectContent>
               </Select>
-            ) : (
-              <div className="flex h-10 items-center gap-3 rounded-md bg-muted/20 px-3 py-2">
-                <AssetIcon type="currency" currency={value.currency} size="sm" />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {currencyMeta?.label ?? value.currency.toUpperCase()}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {value.currency.toUpperCase()}
-                  </p>
+            </div>
+            <div className="space-y-0 min-w-0">
+              {!value ? (
+                <div className="h-10 w-full rounded-md border border-border/40 bg-background" />
+              ) : isCrypto ? (
+                <Select
+                  value={currency ?? ""}
+                  onValueChange={(next) =>
+                    onCurrencyChange?.(next as PayoutCurrency)
+                  }
+                >
+                  <SelectTrigger className="h-10 w-full border-border/40 min-w-0">
+                    {currency ? (
+                      <CurrencyOption currency={currency} />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        Currency
+                      </span>
+                    )}
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cryptoCurrencies.map((crypto) => (
+                      <SelectItem key={crypto} value={crypto}>
+                        <CurrencyOption currency={crypto} />
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="flex h-10 items-center gap-3 rounded-md border border-border/40 bg-background px-3 py-2">
+                  <AssetIcon
+                    type="currency"
+                    currency={value.currency}
+                    size="sm"
+                  />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {currencyMeta?.label ?? value.currency.toUpperCase()}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {value.currency.toUpperCase()}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
         </div>
       </CardContent>
     </Card>

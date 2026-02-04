@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-
 import {
   CURRENCY_META,
   NETWORK_META,
@@ -37,11 +36,23 @@ const CRYPTO_RAILS = [
   PayoutNetwork.BASE,
   PayoutNetwork.POLYGON,
 ];
+const FIAT_ETA_OPTIONS = [
+  "4-6 hours",
+  "1-2 days",
+  "2-3 days",
+  "3-5 days",
+  "5-7 days",
+];
+const CRYPTO_ETA_OPTIONS = [
+  "5-15 min",
+  "30-60 min",
+  "2-4 hours",
+  "6-12 hours",
+  "1 day",
+];
 
 const computeSeed = (from: PayoutCurrency, to: PayoutCurrency) =>
-  `${from}-${to}`
-    .split("")
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  `${from}-${to}`.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
 const computeBaseRate = (from: PayoutCurrency, to: PayoutCurrency) => {
   if (from === to) return 1;
@@ -123,9 +134,9 @@ const buildRouteSteps = (
   }
   steps.push(to);
 
-  const rails = steps.slice(0, -1).map((step, i) =>
-    pickRailLabel(step, steps[i + 1], seed + i + index),
-  );
+  const rails = steps
+    .slice(0, -1)
+    .map((step, i) => pickRailLabel(step, steps[i + 1], seed + i + index));
 
   return { steps, rails };
 };
@@ -165,9 +176,7 @@ const generateRoutes = (
   const toMeta = CURRENCY_META[toCurrency];
   const isCryptoPair = fromMeta?.type === "crypto" || toMeta?.type === "crypto";
 
-  const etaOptions = isCryptoPair
-    ? ["5-15 min", "30-60 min", "2-4 hours", "6-12 hours", "1 day"]
-    : ["4-6 hours", "1-2 days", "2-3 days", "3-5 days", "5-7 days"];
+  const etaOptions = isCryptoPair ? CRYPTO_ETA_OPTIONS : FIAT_ETA_OPTIONS;
 
   return Array.from({ length: count }).map((_, index) => {
     const modifier = (index - (count - 1) / 2) * 0.002;
@@ -224,42 +233,48 @@ export function useSendMoneyRoutes({
   const [selectedRouteId, setSelectedRouteId] = React.useState<string | null>(
     null,
   );
-  const [now, setNow] = React.useState(0);
-  const rateDirectionTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const [now, setNow] = React.useState(() => Date.now());
+  const rateDirectionTimeout = React.useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
-  React.useEffect(() => {
-    setNow(Date.now());
-  }, []);
+  const resetRouteState = React.useCallback(
+    (options?: { clearRoutes?: boolean }) => {
+      setSelectedRouteId(null);
+      setLockedRoutes({});
+      setRateDirection({});
+      if (options?.clearRoutes) {
+        setRoutes([]);
+      }
+    },
+    [],
+  );
 
   const updateRoutes = React.useCallback(() => {
     if (!fromCurrency || !toCurrency) {
-      setRoutes([]);
+      resetRouteState({ clearRoutes: true });
       return;
     }
     setRoutes(generateRoutes(fromCurrency, toCurrency));
-  }, [fromCurrency, toCurrency]);
+  }, [fromCurrency, toCurrency, resetRouteState]);
 
   const handleRefreshRoutes = React.useCallback(() => {
-    if (!fromCurrency || !toCurrency) return;
-    setLockedRoutes({});
-    setSelectedRouteId(null);
-    setRateDirection({});
+    if (!fromCurrency || !toCurrency) {
+      resetRouteState({ clearRoutes: true });
+      return;
+    }
+    resetRouteState();
     updateRoutes();
-  }, [fromCurrency, toCurrency, updateRoutes]);
+  }, [fromCurrency, toCurrency, resetRouteState, updateRoutes]);
 
   React.useEffect(() => {
     if (!fromCurrency || !toCurrency) {
-      setRoutes([]);
-      setSelectedRouteId(null);
-      setLockedRoutes({});
+      resetRouteState({ clearRoutes: true });
       return;
     }
-    setSelectedRouteId(null);
-    setLockedRoutes({});
+    resetRouteState();
     updateRoutes();
-  }, [fromCurrency, toCurrency, updateRoutes]);
+  }, [fromCurrency, toCurrency, resetRouteState, updateRoutes]);
 
   const displayedRoutes = React.useMemo(() => {
     const tagged = routes.map((route) => ({ ...route }));
@@ -304,9 +319,7 @@ export function useSendMoneyRoutes({
       (route) => route.id === selectedRouteId,
     );
     if (!selectedRouteId || !hasSelected) {
-      const best = displayedRoutes.find(
-        (route) => route.tag === "best value",
-      );
+      const best = displayedRoutes.find((route) => route.tag === "best value");
       if (best) {
         setSelectedRouteId(best.id);
       }
@@ -370,13 +383,19 @@ export function useSendMoneyRoutes({
     return () => clearInterval(interval);
   }, [lockedRoutes]);
 
-  const handleLockRoute = React.useCallback((routeId: string, currentRate: number) => {
-    setNow(Date.now());
-    setLockedRoutes((prev) => ({
-      ...prev,
-      [routeId]: { rate: currentRate, expiresAt: new Date(Date.now() + 30000) },
-    }));
-  }, []);
+  const handleLockRoute = React.useCallback(
+    (routeId: string, currentRate: number) => {
+      setNow(Date.now());
+      setLockedRoutes((prev) => ({
+        ...prev,
+        [routeId]: {
+          rate: currentRate,
+          expiresAt: new Date(Date.now() + 30000),
+        },
+      }));
+    },
+    [],
+  );
 
   React.useEffect(() => {
     return () => {
@@ -388,7 +407,7 @@ export function useSendMoneyRoutes({
 
   const selectedRoute = routes.find((route) => route.id === selectedRouteId);
   const effectiveRate = selectedRoute
-    ? getLockedRate(lockedRoutes, selectedRoute.id, now) ?? selectedRoute.rate
+    ? (getLockedRate(lockedRoutes, selectedRoute.id, now) ?? selectedRoute.rate)
     : null;
 
   return {

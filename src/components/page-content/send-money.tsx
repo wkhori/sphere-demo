@@ -11,7 +11,7 @@ import type { Account } from "@/lib/types";
 
 import { AccountSelectCard } from "./send-money/account-select-card";
 import { RoutesSection } from "./send-money/routes-section";
-import { useSendMoneyRoutes } from "./send-money/use-send-money-routes";
+import { useSendMoneyRoutes } from "@/hooks/use-send-money-routes";
 
 interface SendMoneyProps {
   prefill?: { from?: Account; to?: Account };
@@ -48,10 +48,11 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
   const [amount, setAmount] = React.useState<string>("");
   const [showConfirmation, setShowConfirmation] = React.useState(false);
   const [fromCryptoCurrency, setFromCryptoCurrency] =
-    React.useState<PayoutCurrency>(() => getInitialCryptoCurrency(prefill?.from));
-  const [toCryptoCurrency, setToCryptoCurrency] = React.useState<PayoutCurrency>(
-    () => getInitialCryptoCurrency(prefill?.to),
-  );
+    React.useState<PayoutCurrency>(() =>
+      getInitialCryptoCurrency(prefill?.from),
+    );
+  const [toCryptoCurrency, setToCryptoCurrency] =
+    React.useState<PayoutCurrency>(() => getInitialCryptoCurrency(prefill?.to));
 
   const resetForm = React.useCallback(() => {
     setFromAccount(null);
@@ -179,18 +180,18 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
       <Card className="border-0 bg-transparent shadow-none py-0 gap-0">
         <CardContent className="p-0">
           <div className="p-2">
-          <p className="text-muted-foreground text-xs">AMOUNT</p>
-          <div className="mt-2 flex items-center gap-3">
-            <input
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-              placeholder="0.00"
-              className="bg-background border-border/40 text-foreground w-full rounded-md border px-3 py-2 text-xl font-semibold outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-          <p className="text-muted-foreground mt-2 text-sm">
-            Recipient receives ≈ {convertedAmount}
-          </p>
+            <p className="text-muted-foreground text-xs">AMOUNT</p>
+            <div className="mt-2 flex items-center gap-3">
+              <input
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+                placeholder="0.00"
+                className="bg-background border-border/40 text-foreground w-full rounded-md border px-3 py-2 text-xl font-semibold outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            <p className="text-muted-foreground mt-2 text-sm">
+              Recipient receives ≈ {convertedAmount}
+            </p>
           </div>
         </CardContent>
       </Card>
