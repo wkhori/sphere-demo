@@ -16,7 +16,6 @@ export type PerType = "word" | "char" | "line";
 export type TextEffectProps = {
   children: string;
   per?: PerType;
-  as?: keyof React.JSX.IntrinsicElements;
   variants?: {
     container?: Variants;
     item?: Variants;
@@ -204,7 +203,6 @@ const createVariantsWithTransition = (
 export function TextEffect({
   children,
   per = "word",
-  as = "p",
   variants,
   className,
   preset = "fade",
@@ -220,7 +218,6 @@ export function TextEffect({
   style,
 }: TextEffectProps) {
   const segments = splitText(children, per);
-  const MotionTag = motion[as as keyof typeof motion] as typeof motion.div;
 
   const baseVariants = preset
     ? presetVariants[preset]
@@ -262,7 +259,7 @@ export function TextEffect({
   return (
     <AnimatePresence mode="popLayout">
       {trigger && (
-        <MotionTag
+        <motion.p
           initial="hidden"
           animate="visible"
           exit="exit"
@@ -282,7 +279,7 @@ export function TextEffect({
               segmentWrapperClassName={segmentWrapperClassName}
             />
           ))}
-        </MotionTag>
+        </motion.p>
       )}
     </AnimatePresence>
   );
