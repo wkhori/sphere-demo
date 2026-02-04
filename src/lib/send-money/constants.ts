@@ -1,0 +1,3 @@
+export const ROUTE_REFRESH_INTERVAL_MS = 5000;
+export const RATE_LOCK_MS = 30000;
+export const LOCK_CHECK_INTERVAL_MS = 1000;

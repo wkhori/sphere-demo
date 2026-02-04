@@ -7,7 +7,11 @@ import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn, formatSeconds } from "@/lib/utils";
-import type { LockedRate, TransferRoute } from "@/hooks/use-send-money-routes";
+import type {
+  LockedRate,
+  RateDirection,
+  TransferRoute,
+} from "@/lib/send-money/types";
 import { RouteTag } from "./route-tag";
 
 export type RouteCardProps = {
@@ -15,8 +19,8 @@ export type RouteCardProps = {
   isSelected: boolean;
   lockedRate?: LockedRate;
   now: number;
-  amountValue: number;
-  direction: "up" | "down" | null;
+  amount: number;
+  direction: RateDirection;
   onSelect: (routeId: string) => void;
   onLock: (routeId: string, currentRate: number) => void;
 };
@@ -26,7 +30,7 @@ export function RouteCard({
   isSelected,
   lockedRate,
   now,
-  amountValue,
+  amount,
   direction,
   onSelect,
   onLock,
@@ -36,7 +40,7 @@ export function RouteCard({
   const remaining = isLocked
     ? Math.max(0, Math.ceil((lockedRate.expiresAt.getTime() - now) / 1000))
     : 0;
-  const feeAmount = amountValue * route.feePercent;
+  const feeAmount = amount * route.feePercent;
 
   return (
     <Card

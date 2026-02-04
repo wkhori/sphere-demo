@@ -2,37 +2,20 @@
 
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  ArrowUpRight,
-  CheckCircle2,
-  Loader2,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
-import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
 import {
   mockAccounts,
   mockHomeActivity,
   mockHomeSummary,
   mockUserProfile,
 } from "@/lib/mock-data";
-import { AssetIcon } from "@/components/ui/asset-icon";
-import { ArrowUpRightIcon } from "@/components/ui/arrow-up-right";
-import { CalendarDaysIcon } from "@/components/ui/calendar-days";
-import { RefreshCWIcon } from "@/components/ui/refresh-cw";
-import type { ArrowUpRightIconHandle } from "@/components/ui/arrow-up-right";
-import type { CalendarDaysIconHandle } from "@/components/ui/calendar-days";
-import type { RefreshCCWIconWIcon } from "@/components/ui/refresh-cw";
-import { formatAmount, formatLastUsed } from "@/lib/utils";
+import { convertAmount } from "@/lib/send-money/amounts";
 import type { Account, HomeActivity } from "@/lib/types";
-
-type RepeatPrefill = {
-  from?: Account;
-  to?: Account;
-  amount: number;
-};
+import type { RepeatPrefill } from "./home-types";
+import { RecentActivityCard } from "./home-recent-activity";
+import { QuickActionsCard } from "./home-quick-actions";
 
 const findAccountByName = (accounts: Account[], target: string) =>
   accounts.find(
@@ -66,7 +49,17 @@ const buildRepeatPrefill = (
     recipientAccounts.find((account) => account.type === target.type) ??
     undefined;
 
-  return { from: from ?? undefined, to, amount: target.amount };
+  const fromCurrency = from?.currency ?? target.currency;
+  const amount =
+    fromCurrency === target.currency
+      ? target.amount
+      : Number(
+          convertAmount(target.amount, target.currency, fromCurrency).toFixed(
+            2,
+          ),
+        );
+
+  return { from: from ?? undefined, to, amount };
 };
 
 export function HomeContent({
@@ -112,11 +105,6 @@ export function HomeContent({
       100
     : 0;
   const momPositive = momDelta >= 0;
-  const sendMoneyIconRef = React.useRef<ArrowUpRightIconHandle>(null);
-  const sendCryptoIconRef = React.useRef<ArrowUpRightIconHandle>(null);
-  const scheduleIconRef = React.useRef<CalendarDaysIconHandle>(null);
-  const repeatIconRef = React.useRef<RefreshCCWIconWIcon>(null);
-
   return (
     <div className="space-y-10">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -175,173 +163,13 @@ export function HomeContent({
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_0.9fr]">
-        <Card className="overflow-hidden">
-          <CardContent className="p-0">
-            <div className="border-b px-6 py-4">
-              <h2 className="text-lg font-semibold">Recent Activity</h2>
-              <p className="text-muted-foreground text-xs">
-                Latest transfers across bank and crypto rails.
-              </p>
-            </div>
-            <AnimatedGroup className="divide-y" preset="fade">
-              {mockHomeActivity.map((tx) => {
-                const currencyCode = tx.recipientCurrency.toUpperCase();
-                const amount = formatAmount(
-                  tx.recipientAmount,
-                  tx.recipientCurrency,
-                );
-                const sentLabel = `Sent ${formatLastUsed(tx.sentAt)}`;
-
-                return (
-                  <div
-                    key={tx.id}
-                    className="flex items-center justify-between px-6 py-4 transition hover:bg-muted/40"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                          <ArrowUpRight className="h-4 w-4" />
-                        </div>
-                        <div className="absolute -bottom-1 -right-1">
-                          {tx.type === "bank" ? (
-                            <AssetIcon
-                              type="bank"
-                              bankName={tx.bankName ?? "Bank"}
-                              size="sm"
-                            />
-                          ) : (
-                            <AssetIcon
-                              type="network"
-                              network={tx.network!}
-                              size="sm"
-                            />
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <p className="font-medium">
-                          {amount} → {tx.to}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {currencyCode} · {sentLabel}
-                        </p>
-                      </div>
-                    </div>
-                    {tx.status === "completed" ? (
-                      <span className="text-green-600 text-sm flex items-center gap-1">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Completed
-                      </span>
-                    ) : (
-                      <span className="text-yellow-600 text-sm flex items-center gap-1">
-                        <Loader2 className="h-3.5 w-3.5" /> Pending
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </AnimatedGroup>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold">Quick Actions</h2>
-                <p className="text-muted-foreground text-xs">
-                  Common transfer workflows.
-                </p>
-              </div>
-            </div>
-            <AnimatedGroup className="mt-4 space-y-3" preset="fade">
-              <button
-                type="button"
-                onClick={() => onNavigate("send")}
-                onMouseEnter={() => sendMoneyIconRef.current?.startAnimation()}
-                onMouseLeave={() => sendMoneyIconRef.current?.stopAnimation()}
-                className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
-              >
-                <div>
-                  <p className="font-medium">Send Money</p>
-                  <p className="text-sm text-muted-foreground">
-                    Transfer funds now
-                  </p>
-                </div>
-                <ArrowUpRightIcon
-                  ref={sendMoneyIconRef}
-                  className="text-muted-foreground"
-                  size={20}
-                />
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate("send")}
-                onMouseEnter={() => sendCryptoIconRef.current?.startAnimation()}
-                onMouseLeave={() => sendCryptoIconRef.current?.stopAnimation()}
-                className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
-              >
-                <div>
-                  <p className="font-medium">Send Crypto</p>
-                  <p className="text-sm text-muted-foreground">
-                    USDC and USDT supported
-                  </p>
-                </div>
-                <ArrowUpRightIcon
-                  ref={sendCryptoIconRef}
-                  className="text-muted-foreground"
-                  size={20}
-                />
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate("send")}
-                className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
-                onMouseEnter={() => scheduleIconRef.current?.startAnimation()}
-                onMouseLeave={() => scheduleIconRef.current?.stopAnimation()}
-              >
-                <div>
-                  <p className="font-medium">Schedule Payment</p>
-                  <p className="text-sm text-muted-foreground">
-                    Schedule a future or recurring transfer
-                  </p>
-                </div>
-                <CalendarDaysIcon
-                  ref={scheduleIconRef}
-                  className="text-muted-foreground"
-                  size={20}
-                />
-              </button>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
-                onClick={() => {
-                  if (repeatPrefill) {
-                    onRepeatLast?.(repeatPrefill);
-                  }
-                }}
-                onMouseEnter={() => repeatIconRef.current?.startAnimation()}
-                onMouseLeave={() => repeatIconRef.current?.stopAnimation()}
-              >
-                <div>
-                  <p className="font-medium">Repeat Last</p>
-                  <p className="text-sm text-muted-foreground">
-                    {repeatTarget
-                      ? `${formatAmount(
-                          repeatTarget.recipientAmount,
-                          repeatTarget.recipientCurrency,
-                        )} → ${repeatTarget.to}`
-                      : "Repeat your latest transfer"}
-                  </p>
-                </div>
-                <RefreshCWIcon
-                  ref={repeatIconRef}
-                  className="text-muted-foreground"
-                  size={20}
-                />
-              </button>
-            </AnimatedGroup>
-          </CardContent>
-        </Card>
+        <RecentActivityCard activity={mockHomeActivity} />
+        <QuickActionsCard
+          onNavigate={onNavigate}
+          onRepeatLast={onRepeatLast}
+          repeatTarget={repeatTarget}
+          repeatPrefill={repeatPrefill}
+        />
       </div>
     </div>
   );

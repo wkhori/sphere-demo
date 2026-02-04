@@ -6,8 +6,12 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { mockAccounts } from "@/lib/mock-data";
-import { CURRENCY_META, PayoutCurrency } from "@/lib/types";
+import { PayoutCurrency } from "@/lib/types";
 import type { Account } from "@/lib/types";
+import {
+  formatCurrencyValue,
+  parseAmountInput,
+} from "@/lib/send-money/amounts";
 
 import { AccountSelectCard } from "./send-money/account-select-card";
 import { RoutesSection } from "./send-money/routes-section";
@@ -26,18 +30,6 @@ const CRYPTO_CURRENCIES: PayoutCurrency[] = [
 const getInitialCryptoCurrency = (account?: Account) =>
   account?.type === "crypto" ? account.currency : PayoutCurrency.USDC;
 
-const formatCurrency = (value: number, currency: PayoutCurrency) => {
-  const meta = CURRENCY_META[currency];
-  if (meta?.type === "fiat") {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      maximumFractionDigits: 2,
-    }).format(value);
-  }
-  return `${value.toFixed(2)} ${currency.toUpperCase()}`;
-};
-
 export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
   const [fromAccount, setFromAccount] = React.useState<Account | null>(
     prefill?.from ?? null,
@@ -45,7 +37,7 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
   const [toAccount, setToAccount] = React.useState<Account | null>(
     prefill?.to ?? null,
   );
-  const [amount, setAmount] = React.useState<string>(
+  const [amountInput, setAmountInput] = React.useState<string>(
     prefill?.amount !== undefined ? String(prefill.amount) : "",
   );
   const [showConfirmation, setShowConfirmation] = React.useState(false);
@@ -59,7 +51,7 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
   const resetForm = React.useCallback(() => {
     setFromAccount(null);
     setToAccount(null);
-    setAmount("");
+    setAmountInput("");
     setFromCryptoCurrency(PayoutCurrency.USDC);
     setToCryptoCurrency(PayoutCurrency.USDC);
   }, []);
@@ -76,7 +68,7 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
   React.useEffect(() => {
     setFromAccount(prefill?.from ?? null);
     setToAccount(prefill?.to ?? null);
-    setAmount(prefill?.amount !== undefined ? String(prefill.amount) : "");
+    setAmountInput(prefill?.amount !== undefined ? String(prefill.amount) : "");
   }, [prefill?.from, prefill?.to, prefill?.amount]);
 
   React.useEffect(() => {
@@ -112,10 +104,10 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
     effectiveRate,
   } = useSendMoneyRoutes({ fromCurrency, toCurrency });
 
-  const amountValue = Number.parseFloat(amount.replace(/,/g, "")) || 0;
+  const amount = parseAmountInput(amountInput);
   const convertedAmount =
     effectiveRate && toCurrency
-      ? formatCurrency(amountValue * effectiveRate, toCurrency)
+      ? formatCurrencyValue(amount * effectiveRate, toCurrency)
       : "—";
 
   if (showConfirmation) {
@@ -186,8 +178,8 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
             <p className="text-muted-foreground text-xs">AMOUNT</p>
             <div className="mt-2 flex items-center gap-3">
               <input
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
+                value={amountInput}
+                onChange={(event) => setAmountInput(event.target.value)}
                 placeholder="0.00"
                 className="bg-background border-border/40 text-foreground w-full rounded-md border px-3 py-2 text-xl font-semibold outline-none focus:ring-2 focus:ring-ring"
               />
@@ -200,7 +192,7 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
       </Card>
 
       <RoutesSection
-        amountValue={amountValue}
+        amount={amount}
         fromCurrency={fromCurrency}
         toCurrency={toCurrency}
         displayedRoutes={displayedRoutes}

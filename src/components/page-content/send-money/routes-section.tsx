@@ -5,18 +5,22 @@ import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { PayoutCurrency } from "@/lib/types";
-import type { LockedRate, TransferRoute } from "@/hooks/use-send-money-routes";
-import { ROUTE_REFRESH_INTERVAL_MS } from "@/hooks/use-send-money-routes";
+import type {
+  LockedRateMap,
+  RateDirectionMap,
+  TransferRoute,
+} from "@/lib/send-money/types";
+import { ROUTE_REFRESH_INTERVAL_MS } from "@/lib/send-money/constants";
 import { RouteCard } from "./route-card";
 
 type RoutesSectionProps = {
-  amountValue: number;
+  amount: number;
   fromCurrency?: PayoutCurrency;
   toCurrency?: PayoutCurrency;
   displayedRoutes: TransferRoute[];
   selectedRouteId: string | null;
-  lockedRoutes: Record<string, LockedRate>;
-  rateDirection: Record<string, "up" | "down" | null>;
+  lockedRoutes: LockedRateMap;
+  rateDirection: RateDirectionMap;
   now: number;
   onSelectRoute: (routeId: string) => void;
   onRefreshRoutes: () => void;
@@ -65,7 +69,7 @@ const RefreshCountdown = ({ cycleKey }: { cycleKey: number }) => {
 };
 
 export function RoutesSection({
-  amountValue,
+  amount,
   fromCurrency,
   toCurrency,
   displayedRoutes,
@@ -139,7 +143,7 @@ export function RoutesSection({
                       isSelected={selectedRouteId === route.id}
                       lockedRate={lockedRoutes[route.id]}
                       now={now}
-                      amountValue={amountValue}
+                      amount={amount}
                       direction={rateDirection[route.id] ?? null}
                       onSelect={onSelectRoute}
                       onLock={onLockRoute}

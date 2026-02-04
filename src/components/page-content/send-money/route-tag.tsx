@@ -1,8 +1,8 @@
-import { TransferRoute } from "@/hooks/use-send-money-routes";
+import type { RouteTag as RouteTagType } from "@/lib/send-money/types";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Zap } from "lucide-react";
 
-export const RouteTag = ({ tag }: { tag?: TransferRoute["tag"] }) => {
+export const RouteTag = ({ tag }: { tag?: RouteTagType }) => {
   if (!tag) {
     return <span />;
   }
