@@ -3,10 +3,12 @@
 import * as React from "react";
 import {
   CURRENCY_META,
+  CURRENCY_RAIL_HINT,
   NETWORK_META,
   PayoutCurrency,
   PayoutNetwork,
 } from "@/lib/types";
+import { computeFxSeed, getBaseFxRate } from "@/lib/fx";
 
 type RouteTag = "best value" | "quickest";
 
@@ -29,13 +31,14 @@ export interface LockedRate {
 
 export const ROUTE_REFRESH_INTERVAL_MS = 5000;
 
-const FIAT_RAILS = ["ACH", "Wire", "SWIFT", "SEPA", "PIX", "FAST"];
+const FIAT_RAILS = ["ACH", "Wire", "SWIFT", "SPEI", "PIX"];
 const CRYPTO_RAILS = [
   PayoutNetwork.SOL,
   PayoutNetwork.ETH,
   PayoutNetwork.BASE,
   PayoutNetwork.POLYGON,
 ];
+const FX_JITTER_RANGE = 0.004;
 const FIAT_ETA_OPTIONS = [
   "4-6 hours",
   "1-2 days",
@@ -51,31 +54,6 @@ const CRYPTO_ETA_OPTIONS = [
   "1 day",
 ];
 
-const computeSeed = (from: PayoutCurrency, to: PayoutCurrency) =>
-  `${from}-${to}`.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-
-const computeBaseRate = (from: PayoutCurrency, to: PayoutCurrency) => {
-  if (from === to) return 1;
-  const fromMeta = CURRENCY_META[from];
-  const toMeta = CURRENCY_META[to];
-  const seed = computeSeed(from, to);
-  const fxBase = 0.82 + (seed % 35) / 100;
-
-  if (fromMeta?.type === "fiat" && toMeta?.type === "fiat") {
-    return fxBase;
-  }
-
-  const stable = new Set<PayoutCurrency>([
-    PayoutCurrency.USDC,
-    PayoutCurrency.USDT,
-  ]);
-  if (stable.has(from) || stable.has(to)) {
-    return 1;
-  }
-
-  return 1 + ((seed % 12) - 6) / 100;
-};
-
 const pickBridgeCurrency = (
   from: PayoutCurrency,
   to: PayoutCurrency,
@@ -85,7 +63,8 @@ const pickBridgeCurrency = (
     PayoutCurrency.USDC,
     PayoutCurrency.USDT,
     PayoutCurrency.USD,
-    PayoutCurrency.EUR,
+    PayoutCurrency.MXN,
+    PayoutCurrency.BRL,
   ];
   let index = seed % candidates.length;
   let bridge = candidates[index];
@@ -104,7 +83,7 @@ const pickRailLabel = (
   const fromMeta = CURRENCY_META[from];
   const toMeta = CURRENCY_META[to];
   if (fromMeta?.type !== toMeta?.type) {
-    return "Sphere";
+    return CURRENCY_RAIL_HINT[from] ?? CURRENCY_RAIL_HINT[to] ?? "Wire";
   }
   if (fromMeta?.type === "crypto" || toMeta?.type === "crypto") {
     const network = CRYPTO_RAILS[seed % CRYPTO_RAILS.length];
@@ -143,7 +122,7 @@ const buildRouteSteps = (
 
 const getRouteCount = (from: PayoutCurrency, to: PayoutCurrency) => {
   if (from === to) return 1;
-  const seed = computeSeed(from, to);
+  const seed = computeFxSeed(from, to);
   const fromMeta = CURRENCY_META[from];
   const toMeta = CURRENCY_META[to];
   const crossType = fromMeta?.type !== toMeta?.type;
@@ -161,8 +140,10 @@ const generateRoutes = (
   fromCurrency: PayoutCurrency,
   toCurrency: PayoutCurrency,
 ): TransferRoute[] => {
-  const seed = computeSeed(fromCurrency, toCurrency);
-  const baseRate = computeBaseRate(fromCurrency, toCurrency);
+  const seed = computeFxSeed(fromCurrency, toCurrency);
+  const baseRate = getBaseFxRate(fromCurrency, toCurrency);
+  const jitter = ((seed % 9) - 4) * FX_JITTER_RANGE;
+  const jitteredRate = baseRate * (1 + jitter);
   const count = getRouteCount(fromCurrency, toCurrency);
   const names = [
     "Express Transfer",
@@ -179,8 +160,8 @@ const generateRoutes = (
   const etaOptions = isCryptoPair ? CRYPTO_ETA_OPTIONS : FIAT_ETA_OPTIONS;
 
   return Array.from({ length: count }).map((_, index) => {
-    const modifier = (index - (count - 1) / 2) * 0.002;
-    const rate = baseRate * (1 + modifier);
+    const modifier = (index - (count - 1) / 2) * 0.0015;
+    const rate = jitteredRate * (1 + modifier);
     const feeBase = isCryptoPair ? 0.003 : 0.006;
     const feePercent = feeBase + (count - index - 1) * 0.002;
     const { steps, rails } = buildRouteSteps(

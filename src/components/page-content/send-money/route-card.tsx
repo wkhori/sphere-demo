@@ -6,22 +6,9 @@ import { AssetIcon } from "@/components/ui/asset-icon";
 import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { PayoutCurrency } from "@/lib/types";
 import { cn, formatSeconds } from "@/lib/utils";
 import type { LockedRate, TransferRoute } from "@/hooks/use-send-money-routes";
 import { RouteTag } from "./route-tag";
-
-const SEPA_CURRENCIES = [PayoutCurrency.EUR, PayoutCurrency.GBP];
-
-const getFallbackRailLabel = (from: PayoutCurrency, to: PayoutCurrency) => {
-  if ([from, to].includes(PayoutCurrency.USD)) {
-    return "ACH";
-  }
-  if ([from, to].some((currency) => SEPA_CURRENCIES.includes(currency))) {
-    return "SEPA";
-  }
-  return "Wire";
-};
 
 export type RouteCardProps = {
   route: TransferRoute;
@@ -95,9 +82,7 @@ export function RouteCard({
               {index < route.steps.length - 1 ? (
                 <>
                   <span className="text-xs text-muted-foreground rounded bg-muted px-2 py-0.5">
-                    {route.rails[index] === "Sphere"
-                      ? getFallbackRailLabel(step, route.steps[index + 1])
-                      : route.rails[index]}
+                    {route.rails[index]}
                   </span>
                   <ArrowRight className="h-3 w-3 text-muted-foreground" />
                 </>

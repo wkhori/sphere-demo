@@ -129,6 +129,11 @@ export const CURRENCY_META: Record<
   [PayoutCurrency.USDT]: { label: "Tether", symbol: "$", type: "crypto" },
 };
 
+export const CURRENCY_RAIL_HINT: Partial<Record<PayoutCurrency, string>> = {
+  [PayoutCurrency.MXN]: "SPEI",
+  [PayoutCurrency.BRL]: "PIX",
+};
+
 export const NETWORK_META: Record<
   PayoutNetwork,
   { label: string; type: "fiat" | "crypto" }
@@ -216,6 +221,8 @@ export type HomeActivity = {
   to: string;
   amount: number;
   currency: PayoutCurrency;
+  recipientAmount: number;
+  recipientCurrency: PayoutCurrency;
   status: "completed" | "pending";
   sentAt: Date;
   type: "bank" | "crypto";

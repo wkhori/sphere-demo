@@ -26,19 +26,85 @@ import type { ArrowUpRightIconHandle } from "@/components/ui/arrow-up-right";
 import type { CalendarDaysIconHandle } from "@/components/ui/calendar-days";
 import type { RefreshCCWIconWIcon } from "@/components/ui/refresh-cw";
 import { formatAmount, formatLastUsed } from "@/lib/utils";
+import type { Account, HomeActivity } from "@/lib/types";
+
+type RepeatPrefill = {
+  from?: Account;
+  to?: Account;
+  amount: number;
+};
+
+const findAccountByName = (accounts: Account[], target: string) =>
+  accounts.find(
+    (account) => account.name === target || account.nickname === target,
+  );
+
+const pickFromAccount = (
+  accounts: Account[],
+  type: Account["type"],
+  currency: Account["currency"],
+) =>
+  accounts.find(
+    (account) => account.type === type && account.currency === currency,
+  ) ??
+  accounts.find((account) => account.type === type && account.isDefault) ??
+  accounts.find((account) => account.type === type) ??
+  null;
+
+const buildRepeatPrefill = (
+  target: HomeActivity,
+  selfAccounts: Account[],
+  recipientAccounts: Account[],
+  allAccounts: Account[],
+): RepeatPrefill => {
+  const matchingRecipient = findAccountByName(recipientAccounts, target.to);
+  const matchingAny = findAccountByName(allAccounts, target.to);
+  const from = pickFromAccount(selfAccounts, target.type, target.currency);
+  const to =
+    matchingRecipient ??
+    matchingAny ??
+    recipientAccounts.find((account) => account.type === target.type) ??
+    undefined;
+
+  return { from: from ?? undefined, to, amount: target.amount };
+};
 
 export function HomeContent({
   onNavigate,
+  onRepeatLast,
 }: {
   onNavigate: (view: "send" | "accounts") => void;
+  onRepeatLast?: (prefill: {
+    from?: Account;
+    to?: Account;
+    amount: number;
+  }) => void;
 }) {
+  const selfAccounts = React.useMemo(
+    () => mockAccounts.filter((account) => account.ownership === "self"),
+    [],
+  );
+  const recipientAccounts = React.useMemo(
+    () => mockAccounts.filter((account) => account.ownership === "recipient"),
+    [],
+  );
   const activeAccounts = mockAccounts.filter(
     (account) => account.status === "active",
   ).length;
-  const recipientCount = mockAccounts.filter(
-    (account) => account.ownership === "recipient",
-  ).length;
+  const recipientCount = recipientAccounts.length;
   const repeatTarget = mockHomeActivity[0];
+  const repeatPrefill = React.useMemo(
+    () =>
+      repeatTarget
+        ? buildRepeatPrefill(
+            repeatTarget,
+            selfAccounts,
+            recipientAccounts,
+            mockAccounts,
+          )
+        : null,
+    [repeatTarget, selfAccounts, recipientAccounts],
+  );
   const momDelta = mockHomeSummary.lastMonthTransferred
     ? ((mockHomeSummary.monthlyTransferred -
         mockHomeSummary.lastMonthTransferred) /
@@ -119,8 +185,11 @@ export function HomeContent({
             </div>
             <AnimatedGroup className="divide-y" preset="fade">
               {mockHomeActivity.map((tx) => {
-                const currencyCode = tx.currency.toUpperCase();
-                const amount = formatAmount(tx.amount, tx.currency);
+                const currencyCode = tx.recipientCurrency.toUpperCase();
+                const amount = formatAmount(
+                  tx.recipientAmount,
+                  tx.recipientCurrency,
+                );
                 const sentLabel = `Sent ${formatLastUsed(tx.sentAt)}`;
 
                 return (
@@ -245,6 +314,11 @@ export function HomeContent({
               <button
                 type="button"
                 className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
+                onClick={() => {
+                  if (repeatPrefill) {
+                    onRepeatLast?.(repeatPrefill);
+                  }
+                }}
                 onMouseEnter={() => repeatIconRef.current?.startAnimation()}
                 onMouseLeave={() => repeatIconRef.current?.stopAnimation()}
               >
@@ -253,8 +327,8 @@ export function HomeContent({
                   <p className="text-sm text-muted-foreground">
                     {repeatTarget
                       ? `${formatAmount(
-                          repeatTarget.amount,
-                          repeatTarget.currency,
+                          repeatTarget.recipientAmount,
+                          repeatTarget.recipientCurrency,
                         )} → ${repeatTarget.to}`
                       : "Repeat your latest transfer"}
                   </p>

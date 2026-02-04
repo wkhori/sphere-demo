@@ -14,7 +14,7 @@ import { RoutesSection } from "./send-money/routes-section";
 import { useSendMoneyRoutes } from "@/hooks/use-send-money-routes";
 
 interface SendMoneyProps {
-  prefill?: { from?: Account; to?: Account };
+  prefill?: { from?: Account; to?: Account; amount?: number };
   onNavigate: (view: "home" | "accounts") => void;
 }
 
@@ -45,7 +45,9 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
   const [toAccount, setToAccount] = React.useState<Account | null>(
     prefill?.to ?? null,
   );
-  const [amount, setAmount] = React.useState<string>("");
+  const [amount, setAmount] = React.useState<string>(
+    prefill?.amount !== undefined ? String(prefill.amount) : "",
+  );
   const [showConfirmation, setShowConfirmation] = React.useState(false);
   const [fromCryptoCurrency, setFromCryptoCurrency] =
     React.useState<PayoutCurrency>(() =>
@@ -74,7 +76,8 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
   React.useEffect(() => {
     setFromAccount(prefill?.from ?? null);
     setToAccount(prefill?.to ?? null);
-  }, [prefill?.from, prefill?.to]);
+    setAmount(prefill?.amount !== undefined ? String(prefill.amount) : "");
+  }, [prefill?.from, prefill?.to, prefill?.amount]);
 
   React.useEffect(() => {
     if (fromAccount?.type !== "crypto") return;

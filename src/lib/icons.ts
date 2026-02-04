@@ -4,8 +4,10 @@ import { PayoutCurrency, PayoutNetwork } from "./types";
 export const BANK_LOGOS: Record<string, string> = {
   "Bank of America": "/banks/bank-of-america.svg",
   Barclays: "/banks/barclays.png",
+  "BBVA Mexico": "/banks/bbva-mx.png",
   Chase: "/banks/chase.svg",
   Citi: "/banks/citi.svg",
+  "Itau Unibanco": "/banks/itau.svg",
   PNC: "/banks/pnc.svg",
   "TD Bank": "/banks/td.png",
   "Wells Fargo": "/banks/wells-fargo.svg",

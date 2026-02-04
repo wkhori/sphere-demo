@@ -17,7 +17,7 @@ export default function Page() {
     "home" | "send" | "accounts" | "profile"
   >("home");
   const [sendPrefill, setSendPrefill] = React.useState<
-    { from?: Account; to?: Account } | undefined
+    { from?: Account; to?: Account; amount?: number } | undefined
   >(undefined);
 
   const handleNavSelect = (title: string) => {
@@ -41,6 +41,15 @@ export default function Page() {
   const handleHomeNavigate = (view: "send" | "accounts") => {
     setActiveView(view === "send" ? "send" : "accounts");
     setSendPrefill(undefined);
+  };
+
+  const handleRepeatLast = (prefill: {
+    from?: Account;
+    to?: Account;
+    amount: number;
+  }) => {
+    setActiveView("send");
+    setSendPrefill(prefill);
   };
 
   const handleSendNavigate = (view: "home" | "accounts") => {
@@ -94,7 +103,10 @@ export default function Page() {
           ) : activeView === "send" ? (
             <SendMoney prefill={sendPrefill} onNavigate={handleSendNavigate} />
           ) : (
-            <HomeContent onNavigate={handleHomeNavigate} />
+            <HomeContent
+              onNavigate={handleHomeNavigate}
+              onRepeatLast={handleRepeatLast}
+            />
           )}
         </div>
       </SidebarInset>
