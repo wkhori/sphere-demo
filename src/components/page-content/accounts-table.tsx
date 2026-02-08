@@ -47,9 +47,9 @@ const FILTERS: FilterOption[] = [
 ];
 
 const STATUS_STYLES: Record<Account["status"], string> = {
-  active: "bg-emerald-100 text-emerald-700",
-  pending: "bg-amber-100 text-amber-700",
-  inactive: "bg-slate-100 text-slate-700",
+  active: "bg-status-success text-status-success-foreground",
+  pending: "bg-status-warning text-status-warning-foreground",
+  inactive: "bg-status-neutral text-status-neutral-foreground",
 };
 
 const STATUS_LABELS: Record<Account["status"], string> = {
@@ -141,7 +141,7 @@ export function AccountsTable({
                             {account.nickname ?? account.name}
                           </span>
                           {account.isDefault ? (
-                            <Star className="size-4 fill-amber-400 text-amber-400" />
+                            <Star className="size-4 fill-star text-star" />
                           ) : null}
                           {account.ownership === "recipient" ? (
                             <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-medium">
@@ -160,8 +160,8 @@ export function AccountsTable({
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
                         account.type === "bank"
-                          ? "bg-slate-100 text-slate-700"
-                          : "bg-indigo-100 text-indigo-700",
+                          ? "bg-status-neutral text-status-neutral-foreground"
+                          : "bg-status-info text-status-info-foreground",
                       )}
                     >
                       {account.type === "bank" ? (

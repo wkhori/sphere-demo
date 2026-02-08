@@ -133,7 +133,7 @@ export function HomeContent({
               <p
                 className={`
                   inline-flex items-center gap-1 text-xs font-medium
-                  ${momPositive ? "text-emerald-600" : "text-rose-600"}
+                  ${momPositive ? "text-trend-positive" : "text-trend-negative"}
                 `}
               >
                 {momPositive ? (

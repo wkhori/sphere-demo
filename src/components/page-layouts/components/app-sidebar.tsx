@@ -4,7 +4,6 @@ import type { ComponentProps } from "react";
 
 import {
   ArrowUpRight,
-  BadgeDollarSign,
   Home,
   Landmark,
   MoreHorizontal,
@@ -21,6 +20,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { BrandLogo } from "@/components/ui/brand-logo";
+import { useBrand } from "@/components/brand-provider";
 import { mockUserProfile } from "@/lib/mock-data";
 
 const data = {
@@ -56,6 +57,7 @@ export function AppSidebar({
   activeNav?: string;
 }) {
   const { isMobile, setOpenMobile } = useSidebar();
+  const { brand } = useBrand();
 
   const handleProfileSelect = () => {
     onProfileSelect?.();
@@ -80,16 +82,14 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" isActive={isProfileActive} asChild>
               <button type="button" onClick={handleProfileSelect}>
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <BadgeDollarSign className="size-4" />
-                </div>
+                <BrandLogo size="md" />
                 <div className="flex flex-1 items-center gap-2 text-left text-sm leading-tight">
                   <div className="min-w-0 flex-1">
                     <span className="block truncate font-medium">
                       {mockUserProfile.name}
                     </span>
                     <span className="block truncate text-xs">
-                      {mockUserProfile.organization}
+                      {brand?.tenantName ?? mockUserProfile.organization}
                     </span>
                   </div>
                   <MoreHorizontal className="size-4 shrink-0 text-muted-foreground" />

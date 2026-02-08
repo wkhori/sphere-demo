@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { BrandProvider } from "@/components/brand-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,12 +21,23 @@ export const metadata: Metadata = {
 const themeScript = `
 (() => {
   try {
-    const stored = localStorage.getItem('theme');
-    const theme = stored === 'dark' ? 'dark' : 'light';
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  } catch {
-    // no-op
-  }
+    var brand = null;
+    try {
+      var raw = localStorage.getItem('brand-config');
+      if (raw) brand = JSON.parse(raw);
+    } catch {}
+
+    var allowDark = !brand || brand.allowDarkMode !== false;
+    var stored = localStorage.getItem('theme');
+    var mode = stored === 'dark' && allowDark ? 'dark' : stored === 'light' ? 'light' : (brand && brand.defaultMode) || 'light';
+    document.documentElement.classList.toggle('dark', mode === 'dark');
+
+    if (brand && typeof brand.primary === 'string') {
+      var s = document.documentElement.style;
+      if (brand.radius != null) s.setProperty('--radius', brand.radius / 16 + 'rem');
+      if (brand.fontFamily) s.setProperty('--font-geist-sans', brand.fontFamily);
+    }
+  } catch {}
 })();
 `;
 
@@ -42,7 +54,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <BrandProvider>{children}</BrandProvider>
       </body>
     </html>
   );

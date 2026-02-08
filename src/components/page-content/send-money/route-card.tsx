@@ -101,8 +101,8 @@ export function RouteCard({
             <span
               className={cn(
                 "font-medium text-foreground",
-                direction === "up" && "text-emerald-600",
-                direction === "down" && "text-rose-600",
+                direction === "up" && "text-trend-positive",
+                direction === "down" && "text-trend-negative",
               )}
             >
               <AnimatedNumber

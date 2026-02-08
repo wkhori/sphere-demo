@@ -14,8 +14,8 @@ export const RouteTag = ({ tag }: { tag?: RouteTagType }) => {
       className={cn(
         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium capitalize",
         isBest
-          ? "bg-emerald-500/8 text-emerald-700 border border-emerald-500/15 dark:text-emerald-300 dark:bg-emerald-400/10 dark:border-emerald-400/20"
-          : "bg-amber-500/8 text-amber-800 border border-amber-500/15 dark:text-amber-300 dark:bg-amber-400/10 dark:border-amber-400/20",
+          ? "bg-status-success/60 text-status-success-foreground border border-status-success"
+          : "bg-status-warning/60 text-status-warning-foreground border border-status-warning",
       )}
     >
       {isBest ? (

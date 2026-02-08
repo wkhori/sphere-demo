@@ -114,7 +114,7 @@ export function SendMoney({ prefill, onNavigate }: SendMoneyProps) {
     return (
       <div className="space-y-4 mx-auto w-full max-w-129 md:w-129">
         <div className="rounded-lg bg-muted/15 p-4 text-center">
-          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-status-success text-status-success-foreground">
             <CheckCircle2 className="h-5 w-5" />
           </div>
           <h2 className="text-lg font-semibold">Transfer queued</h2>
