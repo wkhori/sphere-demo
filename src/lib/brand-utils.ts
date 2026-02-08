@@ -23,13 +23,14 @@ function clamp(v: number, min: number, max: number) {
 }
 
 // Light mode derivations
-
+// Secondary: lighter tint of primary hue, retains enough chroma to look tinted (not gray)
 function deriveSecondary(p: Oklch): Oklch {
-  return { l: clamp(p.l + 0.42, 0, 0.98), c: p.c * 0.08, h: p.h };
+  return { l: clamp(p.l + 0.35, 0.88, 0.97), c: clamp(p.c * 0.35, 0.01, 0.06), h: p.h };
 }
 
+// Accent: complementary hue (+150°), moderate lightness, noticeable chroma
 function deriveAccent(p: Oklch): Oklch {
-  return { l: clamp(p.l + 0.42, 0, 0.98), c: p.c * 0.1, h: (p.h + 15) % 360 };
+  return { l: clamp(p.l + 0.32, 0.86, 0.96), c: clamp(p.c * 0.4, 0.012, 0.06), h: (p.h + 150) % 360 };
 }
 
 // Dark mode derivations
@@ -38,12 +39,14 @@ function deriveDarkPrimary(p: Oklch): Oklch {
   return { l: clamp(1 - p.l + 0.15, 0.6, 0.95), c: p.c * 0.85, h: p.h };
 }
 
+// Dark secondary: subtle tint of primary hue at low lightness
 function deriveDarkSecondary(p: Oklch): Oklch {
-  return { l: clamp(p.l - 0.05, 0.15, 0.35), c: p.c * 0.06, h: p.h };
+  return { l: clamp(p.l - 0.05, 0.18, 0.3), c: clamp(p.c * 0.2, 0.005, 0.03), h: p.h };
 }
 
+// Dark accent: complementary hue shift, slightly more chroma than secondary
 function deriveDarkAccent(p: Oklch): Oklch {
-  return { l: clamp(p.l - 0.05, 0.15, 0.35), c: p.c * 0.08, h: (p.h + 15) % 360 };
+  return { l: clamp(p.l - 0.05, 0.18, 0.3), c: clamp(p.c * 0.25, 0.006, 0.035), h: (p.h + 150) % 360 };
 }
 
 // Foreground helper — pick dark or light text based on bg lightness

@@ -10,11 +10,12 @@ import { AccountsTable } from "@/components/page-content/accounts-table";
 import { HomeContent } from "@/components/page-content/home";
 import { ProfileDetails } from "@/components/page-content/profile-details";
 import { SendMoney } from "@/components/page-content/send-money";
+import { ThemeShowcase } from "@/components/page-content/theme-showcase";
 import type { Account } from "@/lib/types";
 
 export default function Page() {
   const [activeView, setActiveView] = React.useState<
-    "home" | "send" | "accounts" | "profile"
+    "home" | "send" | "accounts" | "profile" | "theme"
   >("home");
   const [sendPrefill, setSendPrefill] = React.useState<
     { from?: Account; to?: Account; amount?: number } | undefined
@@ -92,16 +93,23 @@ export default function Page() {
                 ? "My Accounts"
                 : activeView === "send"
                   ? "Send Money"
-                  : "Home"
+                  : activeView === "theme"
+                    ? "Theme"
+                    : "Home"
           }
         />
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           {activeView === "profile" ? (
-            <ProfileDetails onSignOut={() => setActiveView("home")} />
+            <ProfileDetails
+              onSignOut={() => setActiveView("home")}
+              onThemeSettings={() => setActiveView("theme")}
+            />
           ) : activeView === "accounts" ? (
             <AccountsTable onSelectAccount={handleAccountSelect} />
           ) : activeView === "send" ? (
             <SendMoney prefill={sendPrefill} onNavigate={handleSendNavigate} />
+          ) : activeView === "theme" ? (
+            <ThemeShowcase />
           ) : (
             <HomeContent
               onNavigate={handleHomeNavigate}

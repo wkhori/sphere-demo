@@ -1,10 +1,16 @@
 "use client";
 
-import { BadgeCheck, IdCard, LogOut, Mail, Phone } from "lucide-react";
+import { BadgeCheck, IdCard, LogOut, Mail, Palette, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { mockUserProfile } from "@/lib/mock-data";
 
-export function ProfileDetails({ onSignOut }: { onSignOut: () => void }) {
+export function ProfileDetails({
+  onSignOut,
+  onThemeSettings,
+}: {
+  onSignOut: () => void;
+  onThemeSettings?: () => void;
+}) {
   const kybVerifiedAt = mockUserProfile.kybVerifiedAt
     ? new Intl.DateTimeFormat("en-US", {
         month: "short",
@@ -29,10 +35,18 @@ export function ProfileDetails({ onSignOut }: { onSignOut: () => void }) {
             </div>
           </div>
         </div>
-        <Button variant="outline" size="sm" onClick={onSignOut}>
-          <LogOut className="size-4" />
-          Sign out
-        </Button>
+        <div className="flex items-center gap-2">
+          {onThemeSettings && (
+            <Button variant="outline" size="sm" onClick={onThemeSettings}>
+              <Palette className="size-4" />
+              Theme Settings
+            </Button>
+          )}
+          <Button variant="outline" size="sm" onClick={onSignOut}>
+            <LogOut className="size-4" />
+            Sign out
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6 pt-6 lg:grid-cols-2 lg:gap-10">
@@ -55,8 +69,17 @@ export function ProfileDetails({ onSignOut }: { onSignOut: () => void }) {
               <BadgeCheck className="size-4" />
               KYB status
             </div>
-            <div className="mt-2 rounded-xl border border-border/60 bg-background px-3 py-2 text-sm">
-              {mockUserProfile.kybStatus}
+            <div className="mt-2 flex items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2 text-sm">
+              <span
+                className={
+                  mockUserProfile.kybStatus === "Verified"
+                    ? "inline-flex items-center gap-1.5 rounded-full bg-status-success px-2 py-0.5 text-xs font-medium text-status-success-foreground"
+                    : "inline-flex items-center gap-1.5 rounded-full bg-status-warning px-2 py-0.5 text-xs font-medium text-status-warning-foreground"
+                }
+              >
+                <BadgeCheck className="size-3" />
+                {mockUserProfile.kybStatus}
+              </span>
             </div>
             <p className="text-muted-foreground mt-1 text-xs min-h-4">
               {kybVerifiedAt
