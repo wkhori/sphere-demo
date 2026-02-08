@@ -66,11 +66,11 @@ export function RecentActivityCard({ activity }: RecentActivityCardProps) {
                   </div>
                 </div>
                 {tx.status === "completed" ? (
-                  <span className="text-green-600 text-sm flex items-center gap-1">
+                  <span className="text-status-success-foreground text-sm flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5" /> Completed
                   </span>
                 ) : (
-                  <span className="text-yellow-600 text-sm flex items-center gap-1">
+                  <span className="text-status-warning-foreground text-sm flex items-center gap-1">
                     <Loader2 className="h-3.5 w-3.5" /> Pending
                   </span>
                 )}

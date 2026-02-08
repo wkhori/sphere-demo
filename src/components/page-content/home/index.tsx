@@ -127,7 +127,7 @@ export function HomeContent({
               <p className="text-muted-foreground text-sm">
                 Transferred this month
               </p>
-              <div className="text-3xl font-semibold">
+              <div className="text-3xl font-semibold text-primary">
                 $<AnimatedNumber value={mockHomeSummary.monthlyTransferred} />
               </div>
               <p
@@ -147,15 +147,25 @@ export function HomeContent({
             <div className="space-y-2 md:border-l md:border-border/60 md:pl-6">
               <p className="text-muted-foreground text-sm">Active accounts</p>
               <p className="text-2xl font-semibold">{activeAccounts}</p>
-              <p className="text-muted-foreground text-xs">
-                Bank and crypto destinations
+              <p className="text-xs">
+                <span className="inline-flex items-center gap-1 rounded-full bg-status-success px-1.5 py-0.5 text-status-success-foreground font-medium">
+                  {activeAccounts} active
+                </span>
+                <span className="text-muted-foreground ml-1">
+                  of {mockAccounts.length} total
+                </span>
               </p>
             </div>
             <div className="space-y-2 md:border-l md:border-border/60 md:pl-6">
               <p className="text-muted-foreground text-sm">Recipients</p>
               <p className="text-2xl font-semibold">{recipientCount}</p>
-              <p className="text-muted-foreground text-xs">
-                Received money this year
+              <p className="text-xs">
+                <span className="inline-flex items-center gap-1 rounded-full bg-status-info px-1.5 py-0.5 text-status-info-foreground font-medium">
+                  {recipientCount} saved
+                </span>
+                <span className="text-muted-foreground ml-1">
+                  recipients
+                </span>
               </p>
             </div>
           </div>

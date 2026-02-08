@@ -48,7 +48,7 @@ export function QuickActionsCard({
             onClick={() => onNavigate("send")}
             onMouseEnter={() => sendMoneyIconRef.current?.startAnimation()}
             onMouseLeave={() => sendMoneyIconRef.current?.stopAnimation()}
-            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
+            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40 hover:border-l-primary/60 border-l hover:border-l-2"
           >
             <div>
               <p className="font-medium">Send Money</p>
@@ -67,7 +67,7 @@ export function QuickActionsCard({
             onClick={() => onNavigate("send")}
             onMouseEnter={() => sendCryptoIconRef.current?.startAnimation()}
             onMouseLeave={() => sendCryptoIconRef.current?.stopAnimation()}
-            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
+            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40 hover:border-l-primary/60 border-l hover:border-l-2"
           >
             <div>
               <p className="font-medium">Send Crypto</p>
@@ -84,7 +84,7 @@ export function QuickActionsCard({
           <button
             type="button"
             onClick={() => onNavigate("send")}
-            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
+            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40 hover:border-l-primary/60 border-l hover:border-l-2"
             onMouseEnter={() => scheduleIconRef.current?.startAnimation()}
             onMouseLeave={() => scheduleIconRef.current?.stopAnimation()}
           >
@@ -102,7 +102,7 @@ export function QuickActionsCard({
           </button>
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40"
+            className="flex w-full items-center justify-between rounded-lg border border-border/60 px-4 py-3 text-left transition hover:bg-muted/40 hover:border-l-primary/60 border-l hover:border-l-2"
             onClick={() => {
               if (repeatPrefill) {
                 onRepeatLast?.(repeatPrefill);

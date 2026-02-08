@@ -30,6 +30,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 type FilterState = "all" | "self" | "recipient" | "bank" | "crypto";
 
@@ -64,6 +76,7 @@ export function AccountsTable({
   onSelectAccount?: (account: Account) => void;
 }) {
   const [filter, setFilter] = React.useState<FilterState>("all");
+  const [detailAccount, setDetailAccount] = React.useState<Account | null>(null);
 
   const filteredAccounts = React.useMemo(() => {
     if (filter === "all") return mockAccounts;
@@ -141,7 +154,12 @@ export function AccountsTable({
                             {account.nickname ?? account.name}
                           </span>
                           {account.isDefault ? (
-                            <Star className="size-4 fill-star text-star" />
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Star className="size-4 fill-star text-star" />
+                              </TooltipTrigger>
+                              <TooltipContent>Default account</TooltipContent>
+                            </Tooltip>
                           ) : null}
                           {account.ownership === "recipient" ? (
                             <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-medium">
@@ -211,7 +229,7 @@ export function AccountsTable({
                           <DropdownMenuItem
                             onClick={(event) => {
                               event.stopPropagation();
-                              console.log("View details", account.id);
+                              setDetailAccount(account);
                             }}
                           >
                             <Eye className="size-4" />
@@ -241,6 +259,81 @@ export function AccountsTable({
       <p className="text-muted-foreground mt-4 text-xs">
         Showing {filteredAccounts.length} of {mockAccounts.length} accounts
       </p>
+
+      <Sheet
+        open={!!detailAccount}
+        onOpenChange={(open) => {
+          if (!open) setDetailAccount(null);
+        }}
+      >
+        <SheetContent side="right">
+          {detailAccount && (
+            <>
+              <SheetHeader>
+                <SheetTitle>{detailAccount.nickname ?? detailAccount.name}</SheetTitle>
+                <SheetDescription>
+                  {detailAccount.type === "bank" ? "Bank account" : "Crypto wallet"} details
+                </SheetDescription>
+              </SheetHeader>
+              <div className="space-y-4 p-4">
+                <div className="flex items-center gap-3">
+                  {detailAccount.type === "bank" ? (
+                    <AssetIcon type="bank" bankName={detailAccount.bankName ?? "Bank"} size="lg" />
+                  ) : (
+                    <AssetIcon type="network" network={detailAccount.network!} size="lg" />
+                  )}
+                  <div>
+                    <p className="font-medium">{detailAccount.nickname ?? detailAccount.name}</p>
+                    <p className="text-sm text-muted-foreground">{formatAccountIdentifier(detailAccount)}</p>
+                  </div>
+                </div>
+                <div className="space-y-3 rounded-lg border border-border/40 p-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Status</span>
+                    <span className={cn("inline-flex rounded-full px-2 py-0.5 text-xs font-medium", STATUS_STYLES[detailAccount.status])}>
+                      {STATUS_LABELS[detailAccount.status]}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Type</span>
+                    <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium", detailAccount.type === "bank" ? "bg-status-neutral text-status-neutral-foreground" : "bg-status-info text-status-info-foreground")}>
+                      {detailAccount.type === "bank" ? <Building2 className="size-3.5" /> : <Wallet className="size-3.5" />}
+                      {detailAccount.type === "bank" ? "Bank" : "Crypto"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Network</span>
+                    <span>{detailAccount.type === "bank" ? detailAccount.bankName : detailAccount.network ? NETWORK_META[detailAccount.network].label : "—"}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Currency</span>
+                    <span className="uppercase">{detailAccount.currency}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Last Used</span>
+                    <span>{formatLastUsed(detailAccount.lastUsedAt)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Ownership</span>
+                    <span className="capitalize">{detailAccount.ownership}</span>
+                  </div>
+                </div>
+                <Button
+                  className="w-full"
+                  size="sm"
+                  onClick={() => {
+                    onSelectAccount?.(detailAccount);
+                    setDetailAccount(null);
+                  }}
+                >
+                  <ArrowUpRightIcon className="size-4" />
+                  Send Money
+                </Button>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
