@@ -5,10 +5,24 @@ import { cn } from "@/lib/utils";
 import { useBrand } from "@/components/brand-provider";
 import { BadgeDollarSign } from "lucide-react";
 
-const sizeClasses = {
-  sm: "h-6 w-6",
-  md: "h-8 w-8",
-  lg: "h-10 w-10",
+/** Height constraints per size — width is unconstrained to respect aspect ratio */
+const heightClasses = {
+  sm: "h-5",
+  md: "h-7",
+  lg: "h-8",
+} as const;
+
+/** Fixed square sizes for the icon fallback */
+const iconSizeClasses = {
+  sm: "size-6",
+  md: "size-8",
+  lg: "size-10",
+} as const;
+
+const iconInnerClasses = {
+  sm: "size-3",
+  md: "size-4",
+  lg: "size-5",
 } as const;
 
 export function BrandLogo({
@@ -20,14 +34,16 @@ export function BrandLogo({
 }) {
   const { brand } = useBrand();
 
-  const sizeClass = sizeClasses[size];
-
   if (brand?.logoUrl) {
     return (
       <img
         src={brand.logoUrl}
         alt={brand.logoAlt ?? brand.tenantName ?? "Logo"}
-        className={cn(sizeClass, "rounded-lg object-contain", className)}
+        className={cn(
+          heightClasses[size],
+          "w-auto max-w-full object-contain",
+          className,
+        )}
       />
     );
   }
@@ -36,12 +52,12 @@ export function BrandLogo({
   return (
     <div
       className={cn(
-        sizeClass,
-        "flex items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground",
+        iconSizeClasses[size],
+        "flex shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground",
         className,
       )}
     >
-      <BadgeDollarSign className="size-4" />
+      <BadgeDollarSign className={iconInnerClasses[size]} />
     </div>
   );
 }
