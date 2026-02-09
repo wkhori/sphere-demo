@@ -2,12 +2,7 @@
 
 import type { ComponentProps } from "react";
 
-import {
-  ArrowUpRight,
-  ChevronsUpDown,
-  Home,
-  Landmark,
-} from "lucide-react";
+import { ArrowUpRight, ChevronsUpDown, Home, Landmark } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import {
@@ -87,7 +82,9 @@ export function AppSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className={`flex items-center gap-2.5 px-1 py-1.5 transition-opacity duration-150 ${hydrated ? "opacity-100" : "opacity-0"}`}>
+            <div
+              className={`flex items-center gap-2.5 px-1 py-1.5 transition-opacity duration-150 ${hydrated ? "opacity-100" : "opacity-0"}`}
+            >
               <BrandLogo size="lg" />
               {!brand?.logoUrl && (
                 <span className="truncate text-sm font-semibold leading-tight">

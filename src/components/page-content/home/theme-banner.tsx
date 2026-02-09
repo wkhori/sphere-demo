@@ -11,9 +11,7 @@ export function useThemeBanner() {
   const [bannerDismissed, setBannerDismissed] = React.useState(true);
 
   React.useEffect(() => {
-    setBannerDismissed(
-      localStorage.getItem(BANNER_DISMISSED_KEY) === "true",
-    );
+    setBannerDismissed(localStorage.getItem(BANNER_DISMISSED_KEY) === "true");
   }, []);
 
   const dismissBanner = () => {
@@ -54,14 +52,25 @@ export function ThemeBanner({
                 <motion.div
                   className="absolute -inset-1 rounded-full bg-primary/10 blur-md"
                   animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.9, 1.1, 0.9] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 />
                 <motion.div
                   className="relative flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/25"
                   animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
-                  <Palette className="size-[18px] text-primary" strokeWidth={1.8} />
+                  <Palette
+                    className="size-[18px] text-primary"
+                    strokeWidth={1.8}
+                  />
                 </motion.div>
               </div>
 
@@ -77,7 +86,8 @@ export function ThemeBanner({
                   </p>
                 </div>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Colors, typography, and logo — match this dashboard to your brand in seconds.
+                  Colors, typography, and logo — match this dashboard to your
+                  brand in seconds.
                 </p>
               </div>
 
@@ -93,7 +103,11 @@ export function ThemeBanner({
                 <span>Customize</span>
                 <motion.div
                   animate={{ x: [0, 3, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
                   <ArrowRight className="size-3.5" />
                 </motion.div>

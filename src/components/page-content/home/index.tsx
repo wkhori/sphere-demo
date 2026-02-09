@@ -1,67 +1,25 @@
 "use client";
 
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { TrendingDown, TrendingUp } from "lucide-react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
-import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 import {
   mockAccounts,
   mockHomeActivity,
-  mockHomeSummary,
   mockUserProfile,
 } from "@/lib/mock-data";
-import { convertAmount } from "@/lib/send-money/amounts";
-import type { Account, HomeActivity } from "@/lib/types";
-import type { RepeatPrefill } from "./types";
+import type { Account } from "@/lib/types";
+import { buildRepeatPrefill } from "./repeat-prefill";
 import { RecentActivityCard } from "./recent-activity";
 import { QuickActionsCard } from "./quick-actions";
+import { SummaryCard } from "./summary-card";
 import { ThemeBanner, useThemeBanner } from "./theme-banner";
 
-const findAccountByName = (accounts: Account[], target: string) =>
-  accounts.find(
-    (account) => account.name === target || account.nickname === target,
-  );
-
-const pickFromAccount = (
-  accounts: Account[],
-  type: Account["type"],
-  currency: Account["currency"],
-) =>
-  accounts.find(
-    (account) => account.type === type && account.currency === currency,
-  ) ??
-  accounts.find((account) => account.type === type && account.isDefault) ??
-  accounts.find((account) => account.type === type) ??
-  null;
-
-const buildRepeatPrefill = (
-  target: HomeActivity,
-  selfAccounts: Account[],
-  recipientAccounts: Account[],
-  allAccounts: Account[],
-): RepeatPrefill => {
-  const matchingRecipient = findAccountByName(recipientAccounts, target.to);
-  const matchingAny = findAccountByName(allAccounts, target.to);
-  const from = pickFromAccount(selfAccounts, target.type, target.currency);
-  const to =
-    matchingRecipient ??
-    matchingAny ??
-    recipientAccounts.find((account) => account.type === target.type) ??
-    undefined;
-
-  const fromCurrency = from?.currency ?? target.currency;
-  const amount =
-    fromCurrency === target.currency
-      ? target.amount
-      : Number(
-          convertAmount(target.amount, target.currency, fromCurrency).toFixed(
-            2,
-          ),
-        );
-
-  return { from: from ?? undefined, to, amount };
-};
+const selfAccounts = mockAccounts.filter(
+  (account) => account.ownership === "self",
+);
+const recipientAccounts = mockAccounts.filter(
+  (account) => account.ownership === "recipient",
+);
 
 export function HomeContent({
   onNavigate,
@@ -77,18 +35,7 @@ export function HomeContent({
   onThemeSettings?: () => void;
 }) {
   const { bannerDismissed, dismissBanner } = useThemeBanner();
-  const selfAccounts = React.useMemo(
-    () => mockAccounts.filter((account) => account.ownership === "self"),
-    [],
-  );
-  const recipientAccounts = React.useMemo(
-    () => mockAccounts.filter((account) => account.ownership === "recipient"),
-    [],
-  );
-  const activeAccounts = mockAccounts.filter(
-    (account) => account.status === "active",
-  ).length;
-  const recipientCount = recipientAccounts.length;
+
   const repeatTarget = mockHomeActivity[0];
   const repeatPrefill = React.useMemo(
     () =>
@@ -100,15 +47,9 @@ export function HomeContent({
             mockAccounts,
           )
         : null,
-    [repeatTarget, selfAccounts, recipientAccounts],
+    [repeatTarget],
   );
-  const momDelta = mockHomeSummary.lastMonthTransferred
-    ? ((mockHomeSummary.monthlyTransferred -
-        mockHomeSummary.lastMonthTransferred) /
-        mockHomeSummary.lastMonthTransferred) *
-      100
-    : 0;
-  const momPositive = momDelta >= 0;
+
   return (
     <div className="space-y-10">
       {onThemeSettings && (
@@ -132,57 +73,7 @@ export function HomeContent({
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-6">
-          <div className="grid gap-6 md:grid-cols-3 md:items-center">
-            <div className="space-y-2">
-              <p className="text-muted-foreground text-sm">
-                Transferred this month
-              </p>
-              <div className="text-3xl font-semibold text-primary">
-                $<AnimatedNumber value={mockHomeSummary.monthlyTransferred} />
-              </div>
-              <p
-                className={`
-                  inline-flex items-center gap-1 text-xs font-medium
-                  ${momPositive ? "text-trend-positive" : "text-trend-negative"}
-                `}
-              >
-                {momPositive ? (
-                  <TrendingUp className="h-3.5 w-3.5" />
-                ) : (
-                  <TrendingDown className="h-3.5 w-3.5" />
-                )}
-                {Math.abs(momDelta).toFixed(1)}% vs last month
-              </p>
-            </div>
-            <div className="space-y-2 md:border-l md:border-border/60 md:pl-6">
-              <p className="text-muted-foreground text-sm">Active accounts</p>
-              <p className="text-2xl font-semibold">{activeAccounts}</p>
-              <p className="text-xs">
-                <span className="inline-flex items-center gap-1 rounded-full bg-status-success px-1.5 py-0.5 text-status-success-foreground font-medium">
-                  {activeAccounts} active
-                </span>
-                <span className="text-muted-foreground ml-1">
-                  of {mockAccounts.length} total
-                </span>
-              </p>
-            </div>
-            <div className="space-y-2 md:border-l md:border-border/60 md:pl-6">
-              <p className="text-muted-foreground text-sm">Recipients</p>
-              <p className="text-2xl font-semibold">{recipientCount}</p>
-              <p className="text-xs">
-                <span className="inline-flex items-center gap-1 rounded-full bg-status-info px-1.5 py-0.5 text-status-info-foreground font-medium">
-                  {recipientCount} saved
-                </span>
-                <span className="text-muted-foreground ml-1">
-                  recipients
-                </span>
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <SummaryCard />
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_0.9fr]">
         <RecentActivityCard activity={mockHomeActivity} />

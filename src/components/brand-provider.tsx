@@ -6,10 +6,7 @@ import {
   BRAND_STORAGE_KEY,
   THEME_STORAGE_KEY,
 } from "@/lib/brand-config";
-import {
-  applyBrandConfig,
-  clearBrandFromDocument,
-} from "@/lib/brand-utils";
+import { applyBrandConfig, clearBrandFromDocument } from "@/lib/brand-utils";
 
 type Mode = "light" | "dark";
 
@@ -225,7 +222,15 @@ export function BrandProvider({ children }: { children: React.ReactNode }) {
   const allowDarkMode = brand?.allowDarkMode !== false;
 
   const value = React.useMemo<BrandContextValue>(
-    () => ({ brand, mode, updateBrand, setBrand, setMode, allowDarkMode, hydrated }),
+    () => ({
+      brand,
+      mode,
+      updateBrand,
+      setBrand,
+      setMode,
+      allowDarkMode,
+      hydrated,
+    }),
     [brand, mode, updateBrand, setBrand, setMode, allowDarkMode, hydrated],
   );
 

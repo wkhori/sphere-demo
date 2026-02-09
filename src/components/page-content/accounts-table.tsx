@@ -76,7 +76,9 @@ export function AccountsTable({
   onSelectAccount?: (account: Account) => void;
 }) {
   const [filter, setFilter] = React.useState<FilterState>("all");
-  const [detailAccount, setDetailAccount] = React.useState<Account | null>(null);
+  const [detailAccount, setDetailAccount] = React.useState<Account | null>(
+    null,
+  );
 
   const filteredAccounts = React.useMemo(() => {
     if (filter === "all") return mockAccounts;
@@ -270,40 +272,79 @@ export function AccountsTable({
           {detailAccount && (
             <>
               <SheetHeader>
-                <SheetTitle>{detailAccount.nickname ?? detailAccount.name}</SheetTitle>
+                <SheetTitle>
+                  {detailAccount.nickname ?? detailAccount.name}
+                </SheetTitle>
                 <SheetDescription>
-                  {detailAccount.type === "bank" ? "Bank account" : "Crypto wallet"} details
+                  {detailAccount.type === "bank"
+                    ? "Bank account"
+                    : "Crypto wallet"}{" "}
+                  details
                 </SheetDescription>
               </SheetHeader>
               <div className="space-y-4 p-4">
                 <div className="flex items-center gap-3">
                   {detailAccount.type === "bank" ? (
-                    <AssetIcon type="bank" bankName={detailAccount.bankName ?? "Bank"} size="lg" />
+                    <AssetIcon
+                      type="bank"
+                      bankName={detailAccount.bankName ?? "Bank"}
+                      size="lg"
+                    />
                   ) : (
-                    <AssetIcon type="network" network={detailAccount.network!} size="lg" />
+                    <AssetIcon
+                      type="network"
+                      network={detailAccount.network!}
+                      size="lg"
+                    />
                   )}
                   <div>
-                    <p className="font-medium">{detailAccount.nickname ?? detailAccount.name}</p>
-                    <p className="text-sm text-muted-foreground">{formatAccountIdentifier(detailAccount)}</p>
+                    <p className="font-medium">
+                      {detailAccount.nickname ?? detailAccount.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {formatAccountIdentifier(detailAccount)}
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-3 rounded-lg border border-border/40 p-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Status</span>
-                    <span className={cn("inline-flex rounded-full px-2 py-0.5 text-xs font-medium", STATUS_STYLES[detailAccount.status])}>
+                    <span
+                      className={cn(
+                        "inline-flex rounded-full px-2 py-0.5 text-xs font-medium",
+                        STATUS_STYLES[detailAccount.status],
+                      )}
+                    >
                       {STATUS_LABELS[detailAccount.status]}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Type</span>
-                    <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium", detailAccount.type === "bank" ? "bg-status-neutral text-status-neutral-foreground" : "bg-status-info text-status-info-foreground")}>
-                      {detailAccount.type === "bank" ? <Building2 className="size-3.5" /> : <Wallet className="size-3.5" />}
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+                        detailAccount.type === "bank"
+                          ? "bg-status-neutral text-status-neutral-foreground"
+                          : "bg-status-info text-status-info-foreground",
+                      )}
+                    >
+                      {detailAccount.type === "bank" ? (
+                        <Building2 className="size-3.5" />
+                      ) : (
+                        <Wallet className="size-3.5" />
+                      )}
                       {detailAccount.type === "bank" ? "Bank" : "Crypto"}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Network</span>
-                    <span>{detailAccount.type === "bank" ? detailAccount.bankName : detailAccount.network ? NETWORK_META[detailAccount.network].label : "—"}</span>
+                    <span>
+                      {detailAccount.type === "bank"
+                        ? detailAccount.bankName
+                        : detailAccount.network
+                          ? NETWORK_META[detailAccount.network].label
+                          : "—"}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Currency</span>
@@ -315,7 +356,9 @@ export function AccountsTable({
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Ownership</span>
-                    <span className="capitalize">{detailAccount.ownership}</span>
+                    <span className="capitalize">
+                      {detailAccount.ownership}
+                    </span>
                   </div>
                 </div>
                 <Button

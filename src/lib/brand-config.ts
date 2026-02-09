@@ -27,7 +27,10 @@ export const AVAILABLE_FONTS = [
   { label: "Geist (Default)", value: "" },
   { label: "Inter", value: "Inter, sans-serif" },
   { label: "System UI", value: "system-ui, sans-serif" },
-  { label: "Helvetica Neue", value: "'Helvetica Neue', Helvetica, Arial, sans-serif" },
+  {
+    label: "Helvetica Neue",
+    value: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+  },
   { label: "Georgia", value: "Georgia, 'Times New Roman', serif" },
   { label: "Menlo", value: "Menlo, Consolas, monospace" },
 ] as const;

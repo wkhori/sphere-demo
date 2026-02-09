@@ -25,12 +25,20 @@ function clamp(v: number, min: number, max: number) {
 // Light mode derivations
 // Secondary: lighter tint of primary hue, retains enough chroma to look tinted (not gray)
 function deriveSecondary(p: Oklch): Oklch {
-  return { l: clamp(p.l + 0.35, 0.88, 0.97), c: clamp(p.c * 0.35, 0.01, 0.06), h: p.h };
+  return {
+    l: clamp(p.l + 0.35, 0.88, 0.97),
+    c: clamp(p.c * 0.35, 0.01, 0.06),
+    h: p.h,
+  };
 }
 
 // Accent: complementary hue (+150°), moderate lightness, noticeable chroma
 function deriveAccent(p: Oklch): Oklch {
-  return { l: clamp(p.l + 0.32, 0.86, 0.96), c: clamp(p.c * 0.4, 0.012, 0.06), h: (p.h + 150) % 360 };
+  return {
+    l: clamp(p.l + 0.32, 0.86, 0.96),
+    c: clamp(p.c * 0.4, 0.012, 0.06),
+    h: (p.h + 150) % 360,
+  };
 }
 
 // Dark mode derivations
@@ -41,12 +49,20 @@ function deriveDarkPrimary(p: Oklch): Oklch {
 
 // Dark secondary: subtle tint of primary hue at low lightness
 function deriveDarkSecondary(p: Oklch): Oklch {
-  return { l: clamp(p.l - 0.05, 0.18, 0.3), c: clamp(p.c * 0.2, 0.005, 0.03), h: p.h };
+  return {
+    l: clamp(p.l - 0.05, 0.18, 0.3),
+    c: clamp(p.c * 0.2, 0.005, 0.03),
+    h: p.h,
+  };
 }
 
 // Dark accent: complementary hue shift, slightly more chroma than secondary
 function deriveDarkAccent(p: Oklch): Oklch {
-  return { l: clamp(p.l - 0.05, 0.18, 0.3), c: clamp(p.c * 0.25, 0.006, 0.035), h: (p.h + 150) % 360 };
+  return {
+    l: clamp(p.l - 0.05, 0.18, 0.3),
+    c: clamp(p.c * 0.25, 0.006, 0.035),
+    h: (p.h + 150) % 360,
+  };
 }
 
 // Foreground helper — pick dark or light text based on bg lightness
@@ -68,18 +84,32 @@ export function cssVarsFromConfig(
 
   if (mode === "light") {
     vars["--primary"] = config.primary;
-    vars["--primary-foreground"] = fg(p.l, "oklch(0.145 0 0)", "oklch(0.985 0 0)");
+    vars["--primary-foreground"] = fg(
+      p.l,
+      "oklch(0.145 0 0)",
+      "oklch(0.985 0 0)",
+    );
 
-    const sec = config.secondary ? parseOklch(config.secondary) : deriveSecondary(p);
+    const sec = config.secondary
+      ? parseOklch(config.secondary)
+      : deriveSecondary(p);
     if (sec) {
       vars["--secondary"] = fmt(sec);
-      vars["--secondary-foreground"] = fg(sec.l, "oklch(0.205 0 0)", "oklch(0.985 0 0)");
+      vars["--secondary-foreground"] = fg(
+        sec.l,
+        "oklch(0.205 0 0)",
+        "oklch(0.985 0 0)",
+      );
     }
 
     const acc = config.accent ? parseOklch(config.accent) : deriveAccent(p);
     if (acc) {
       vars["--accent"] = fmt(acc);
-      vars["--accent-foreground"] = fg(acc.l, "oklch(0.205 0 0)", "oklch(0.985 0 0)");
+      vars["--accent-foreground"] = fg(
+        acc.l,
+        "oklch(0.205 0 0)",
+        "oklch(0.985 0 0)",
+      );
     }
 
     vars["--ring"] = fmt({ l: 0.708, c: p.c * 0.3, h: p.h });
@@ -95,9 +125,15 @@ export function cssVarsFromConfig(
   } else {
     const dp = deriveDarkPrimary(p);
     vars["--primary"] = fmt(dp);
-    vars["--primary-foreground"] = fg(dp.l, "oklch(0.205 0 0)", "oklch(0.985 0 0)");
+    vars["--primary-foreground"] = fg(
+      dp.l,
+      "oklch(0.205 0 0)",
+      "oklch(0.985 0 0)",
+    );
 
-    const sec = config.secondary ? parseOklch(config.secondary) : deriveDarkSecondary(p);
+    const sec = config.secondary
+      ? parseOklch(config.secondary)
+      : deriveDarkSecondary(p);
     if (sec) {
       vars["--secondary"] = fmt(sec);
       vars["--secondary-foreground"] = "oklch(0.985 0 0)";

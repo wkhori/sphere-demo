@@ -47,7 +47,9 @@ function ColorField({
     return readCssVar(cssVarFallback) ?? undefined;
   }, [value, cssVarFallback]);
 
-  const hex = resolvedValue ? oklchToHex(resolvedValue) ?? "#000000" : "#000000";
+  const hex = resolvedValue
+    ? (oklchToHex(resolvedValue) ?? "#000000")
+    : "#000000";
   const isAuto = !value && !!autoLabel;
 
   return (
@@ -58,7 +60,9 @@ function ColorField({
           <button
             type="button"
             className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-            onClick={() => onChange(isAuto ? hexToOklch(hex) ?? undefined : undefined)}
+            onClick={() =>
+              onChange(isAuto ? (hexToOklch(hex) ?? undefined) : undefined)
+            }
           >
             {isAuto ? "Override" : "Auto"}
           </button>
@@ -183,7 +187,10 @@ export function BrandControlsPanel() {
           </SelectTrigger>
           <SelectContent>
             {AVAILABLE_FONTS.map((f) => (
-              <SelectItem key={f.value || "__default"} value={f.value || "__default"}>
+              <SelectItem
+                key={f.value || "__default"}
+                value={f.value || "__default"}
+              >
                 {f.label}
               </SelectItem>
             ))}
@@ -196,7 +203,9 @@ export function BrandControlsPanel() {
         <Input
           value={brand?.logoUrl ?? ""}
           placeholder="https://example.com/logo.svg"
-          onChange={(e) => updateBrand({ logoUrl: e.target.value || undefined })}
+          onChange={(e) =>
+            updateBrand({ logoUrl: e.target.value || undefined })
+          }
           className="h-8 text-xs"
         />
       </div>
@@ -224,8 +233,7 @@ export function BrandControlsPanel() {
             aria-checked={brand?.allowDarkMode !== false}
             onClick={() =>
               updateBrand({
-                allowDarkMode:
-                  brand?.allowDarkMode === false ? true : false,
+                allowDarkMode: brand?.allowDarkMode === false ? true : false,
               })
             }
             className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-border/40 bg-muted transition-colors aria-checked:bg-primary"

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ArrowRight,
-  CheckCircle2,
-  Lock,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, Lock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AssetIcon } from "@/components/ui/asset-icon";
@@ -37,7 +32,11 @@ export function CustomComponentsSection() {
             </div>
             <div className="my-3 flex flex-wrap items-center gap-3 justify-center">
               <div className="flex items-center gap-1">
-                <AssetIcon type="currency" currency={PayoutCurrency.USD} size="md" />
+                <AssetIcon
+                  type="currency"
+                  currency={PayoutCurrency.USD}
+                  size="md"
+                />
                 <span className="text-md font-medium">USD</span>
               </div>
               <span className="text-xs text-primary rounded border border-primary/30 px-2 py-0.5">
@@ -45,7 +44,11 @@ export function CustomComponentsSection() {
               </span>
               <ArrowRight className="h-3 w-3 text-muted-foreground" />
               <div className="flex items-center gap-1">
-                <AssetIcon type="currency" currency={PayoutCurrency.USDC} size="md" />
+                <AssetIcon
+                  type="currency"
+                  currency={PayoutCurrency.USDC}
+                  size="md"
+                />
                 <span className="text-md font-medium">USDC</span>
               </div>
             </div>
@@ -57,7 +60,10 @@ export function CustomComponentsSection() {
                 </span>
               </div>
               <div>
-                Fee: <span className="text-foreground font-medium">$2.50 (0.5%)</span>
+                Fee:{" "}
+                <span className="text-foreground font-medium">
+                  $2.50 (0.5%)
+                </span>
               </div>
               <div>
                 ETA: <span className="text-foreground font-medium">~2 min</span>
@@ -79,7 +85,11 @@ export function CustomComponentsSection() {
             </div>
             <div className="my-3 flex flex-wrap items-center gap-3 justify-center">
               <div className="flex items-center gap-1">
-                <AssetIcon type="currency" currency={PayoutCurrency.EUR} size="md" />
+                <AssetIcon
+                  type="currency"
+                  currency={PayoutCurrency.EUR}
+                  size="md"
+                />
                 <span className="text-md font-medium">EUR</span>
               </div>
               <span className="text-xs text-primary rounded border border-primary/30 px-2 py-0.5">
@@ -87,7 +97,11 @@ export function CustomComponentsSection() {
               </span>
               <ArrowRight className="h-3 w-3 text-muted-foreground" />
               <div className="flex items-center gap-1">
-                <AssetIcon type="currency" currency={PayoutCurrency.GBP} size="md" />
+                <AssetIcon
+                  type="currency"
+                  currency={PayoutCurrency.GBP}
+                  size="md"
+                />
                 <span className="text-md font-medium">GBP</span>
               </div>
             </div>
@@ -99,16 +113,19 @@ export function CustomComponentsSection() {
                 </span>
               </div>
               <div>
-                Fee: <span className="text-foreground font-medium">€1.20 (0.3%)</span>
+                Fee:{" "}
+                <span className="text-foreground font-medium">
+                  €1.20 (0.3%)
+                </span>
               </div>
               <div>
-                ETA: <span className="text-foreground font-medium">~30 sec</span>
+                ETA:{" "}
+                <span className="text-foreground font-medium">~30 sec</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-
     </section>
   );
 }

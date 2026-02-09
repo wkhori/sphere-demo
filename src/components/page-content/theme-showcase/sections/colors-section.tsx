@@ -41,8 +41,8 @@ export function ColorsSection() {
       <div>
         <h2 className="text-lg font-semibold">Brand Colors</h2>
         <p className="text-sm text-muted-foreground">
-          These colors are derived from your primary color and applied across the
-          entire dashboard.
+          These colors are derived from your primary color and applied across
+          the entire dashboard.
         </p>
       </div>
 
