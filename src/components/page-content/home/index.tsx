@@ -2,9 +2,7 @@
 
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, X, TrendingDown, TrendingUp } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 import {
@@ -18,6 +16,7 @@ import type { Account, HomeActivity } from "@/lib/types";
 import type { RepeatPrefill } from "./types";
 import { RecentActivityCard } from "./recent-activity";
 import { QuickActionsCard } from "./quick-actions";
+import { ThemeBanner, useThemeBanner } from "./theme-banner";
 
 const findAccountByName = (accounts: Account[], target: string) =>
   accounts.find(
@@ -64,8 +63,6 @@ const buildRepeatPrefill = (
   return { from: from ?? undefined, to, amount };
 };
 
-const BANNER_DISMISSED_KEY = "theme-banner-dismissed";
-
 export function HomeContent({
   onNavigate,
   onRepeatLast,
@@ -79,18 +76,7 @@ export function HomeContent({
   }) => void;
   onThemeSettings?: () => void;
 }) {
-  const [bannerDismissed, setBannerDismissed] = React.useState(true);
-
-  React.useEffect(() => {
-    setBannerDismissed(
-      localStorage.getItem(BANNER_DISMISSED_KEY) === "true",
-    );
-  }, []);
-
-  const dismissBanner = () => {
-    setBannerDismissed(true);
-    localStorage.setItem(BANNER_DISMISSED_KEY, "true");
-  };
+  const { bannerDismissed, dismissBanner } = useThemeBanner();
   const selfAccounts = React.useMemo(
     () => mockAccounts.filter((account) => account.ownership === "self"),
     [],
@@ -125,61 +111,13 @@ export function HomeContent({
   const momPositive = momDelta >= 0;
   return (
     <div className="space-y-10">
-      <AnimatePresence>
-        {!bannerDismissed && onThemeSettings && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-          >
-            <div className="flex items-center gap-4 rounded-lg border border-primary/25 bg-linear-to-r from-primary/8 via-primary/4 to-transparent px-4 py-3">
-              <motion.div
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20"
-                animate={{ scale: [1, 1.15, 1] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <Sparkles className="size-4 text-primary" />
-              </motion.div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="relative overflow-hidden rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
-                    New
-                    <span className="absolute inset-0 -translate-x-full animate-[shimmer_2.5s_ease-in-out_infinite] bg-linear-to-r from-transparent via-white/25 to-transparent" />
-                  </span>
-                  <p className="text-sm font-medium">
-                    Theme customization is here
-                  </p>
-                </div>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Match the dashboard look and feel to your brand.
-                </p>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => {
-                  dismissBanner();
-                  onThemeSettings();
-                }}
-              >
-                Explore
-                <ArrowRight className="size-3.5" />
-              </Button>
-              <button
-                type="button"
-                onClick={dismissBanner}
-                className="shrink-0 rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {onThemeSettings && (
+        <ThemeBanner
+          dismissed={bannerDismissed}
+          onDismiss={dismissBanner}
+          onExplore={onThemeSettings}
+        />
+      )}
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
