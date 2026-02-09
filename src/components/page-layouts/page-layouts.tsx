@@ -11,35 +11,38 @@ import { SendMoney } from "@/components/page-content/send-money";
 import { ThemeShowcase } from "@/components/page-content/theme-showcase";
 import type { Account } from "@/lib/types";
 
+type View = "home" | "send" | "accounts" | "profile" | "theme";
+
+const VIEW_LABELS: Record<View, string> = {
+  home: "Home",
+  send: "Send Money",
+  accounts: "My Accounts",
+  profile: "Account Details",
+  theme: "Theme",
+};
+
+// Reverse lookup: nav label → view (only for sidebar-navigable views)
+const NAV_LABEL_TO_VIEW: Record<string, View> = {
+  Home: "home",
+  "Send Money": "send",
+  "My Accounts": "accounts",
+  "All Accounts": "accounts",
+};
+
 export default function Page() {
-  const [activeView, setActiveView] = React.useState<
-    "home" | "send" | "accounts" | "profile" | "theme"
-  >("home");
+  const [activeView, setActiveView] = React.useState<View>("home");
   const [sendPrefill, setSendPrefill] = React.useState<
     { from?: Account; to?: Account; amount?: number } | undefined
   >(undefined);
 
-  const handleNavSelect = (title: string) => {
-    if (title === "Home") {
-      setActiveView("home");
-      setSendPrefill(undefined);
-      return;
-    }
-    if (title === "Send Money") {
-      setActiveView("send");
-      setSendPrefill(undefined);
-      return;
-    }
-    if (title === "My Accounts" || title === "All Accounts") {
-      setActiveView("accounts");
-      setSendPrefill(undefined);
-      return;
-    }
+  const navigateTo = (view: View) => {
+    setActiveView(view);
+    if (view !== "send") setSendPrefill(undefined);
   };
 
-  const handleHomeNavigate = (view: "send" | "accounts") => {
-    setActiveView(view === "send" ? "send" : "accounts");
-    setSendPrefill(undefined);
+  const handleNavSelect = (title: string) => {
+    const view = NAV_LABEL_TO_VIEW[title];
+    if (view) navigateTo(view);
   };
 
   const handleRepeatLast = (prefill: {
@@ -51,67 +54,49 @@ export default function Page() {
     setSendPrefill(prefill);
   };
 
-  const handleSendNavigate = (view: "home" | "accounts") => {
-    setActiveView(view);
-    setSendPrefill(undefined);
-  };
-
   const handleAccountSelect = (account: Account) => {
     setActiveView("send");
-    if (account.ownership === "self") {
-      setSendPrefill({ from: account });
-    } else {
-      setSendPrefill({ to: account });
-    }
+    setSendPrefill(
+      account.ownership === "self" ? { from: account } : { to: account },
+    );
   };
 
   return (
     <SidebarProvider>
       <AppSidebar
-        onProfileSelect={() => setActiveView("profile")}
+        onProfileSelect={() => navigateTo("profile")}
         isProfileActive={activeView === "profile"}
         onNavSelect={handleNavSelect}
         activeNav={
-          activeView === "home"
-            ? "Home"
-            : activeView === "send"
-              ? "Send Money"
-              : activeView === "accounts"
-                ? "My Accounts"
-                : undefined
+          activeView === "home" ||
+          activeView === "send" ||
+          activeView === "accounts"
+            ? VIEW_LABELS[activeView]
+            : undefined
         }
       />
       <SidebarInset>
-        <AppHeader
-          label={
-            activeView === "profile"
-              ? "Account Details"
-              : activeView === "accounts"
-                ? "My Accounts"
-                : activeView === "send"
-                  ? "Send Money"
-                  : activeView === "theme"
-                    ? "Theme"
-                    : "Home"
-          }
-        />
+        <AppHeader label={VIEW_LABELS[activeView]} />
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           {activeView === "profile" ? (
             <ProfileDetails
-              onSignOut={() => setActiveView("home")}
-              onThemeSettings={() => setActiveView("theme")}
+              onSignOut={() => navigateTo("home")}
+              onThemeSettings={() => navigateTo("theme")}
             />
           ) : activeView === "accounts" ? (
             <AccountsView onSelectAccount={handleAccountSelect} />
           ) : activeView === "send" ? (
-            <SendMoney prefill={sendPrefill} onNavigate={handleSendNavigate} />
+            <SendMoney
+              prefill={sendPrefill}
+              onNavigate={(view) => navigateTo(view)}
+            />
           ) : activeView === "theme" ? (
             <ThemeShowcase />
           ) : (
             <HomeContent
-              onNavigate={handleHomeNavigate}
+              onNavigate={(view) => navigateTo(view)}
               onRepeatLast={handleRepeatLast}
-              onThemeSettings={() => setActiveView("theme")}
+              onThemeSettings={() => navigateTo("theme")}
             />
           )}
         </div>

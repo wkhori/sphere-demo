@@ -8,7 +8,6 @@ import {
   AccountType,
 } from "./types";
 
-
 const FIRST_NAMES = [
   "James",
   "Maria",
