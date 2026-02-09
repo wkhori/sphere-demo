@@ -13,22 +13,42 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useBrand } from "@/components/brand-provider";
-import { AVAILABLE_FONTS, type BrandConfig } from "@/lib/brand-config";
+import { AVAILABLE_FONTS } from "@/lib/brand-config";
 import { hexToOklch, oklchToHex } from "@/lib/color-utils";
+
+/**
+ * Read the live computed value of a CSS custom property from :root.
+ */
+function readCssVar(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue(`--${name}`)
+    .trim();
+  return raw || null;
+}
 
 function ColorField({
   label,
   value,
   onChange,
   autoLabel,
+  cssVarFallback,
 }: {
   label: string;
   value: string | undefined;
   onChange: (oklch: string | undefined) => void;
   autoLabel?: string;
+  /** CSS var name (without --) to read live default when value is undefined */
+  cssVarFallback?: string;
 }) {
-  const hex = value ? oklchToHex(value) ?? "#000000" : "#000000";
-  const isAuto = !value;
+  const resolvedValue = React.useMemo(() => {
+    if (value) return value;
+    if (!cssVarFallback) return undefined;
+    return readCssVar(cssVarFallback) ?? undefined;
+  }, [value, cssVarFallback]);
+
+  const hex = resolvedValue ? oklchToHex(resolvedValue) ?? "#000000" : "#000000";
+  const isAuto = !value && !!autoLabel;
 
   return (
     <div className="space-y-1.5">
@@ -57,7 +77,7 @@ function ColorField({
         />
         <Input
           value={isAuto ? "" : hex}
-          placeholder={isAuto ? `Auto-derived` : "#000000"}
+          placeholder={isAuto ? "Auto-derived" : "#000000"}
           disabled={isAuto}
           onChange={(e) => {
             const v = e.target.value;
@@ -104,6 +124,7 @@ export function BrandControlsPanel() {
         <ColorField
           label="Primary Color"
           value={brand?.primary}
+          cssVarFallback="primary"
           onChange={(v) => {
             if (v) updateBrand({ primary: v });
           }}
@@ -112,6 +133,7 @@ export function BrandControlsPanel() {
         <ColorField
           label="Secondary Color"
           value={brand?.secondary}
+          cssVarFallback="secondary"
           onChange={(v) => updateBrand({ secondary: v })}
           autoLabel="secondary"
         />
@@ -119,6 +141,7 @@ export function BrandControlsPanel() {
         <ColorField
           label="Accent Color"
           value={brand?.accent}
+          cssVarFallback="accent"
           onChange={(v) => updateBrand({ accent: v })}
           autoLabel="accent"
         />

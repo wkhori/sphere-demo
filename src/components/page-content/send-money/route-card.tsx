@@ -85,7 +85,7 @@ export function RouteCard({
               </div>
               {index < route.steps.length - 1 ? (
                 <>
-                  <span className="text-xs text-muted-foreground rounded bg-muted px-2 py-0.5">
+                  <span className="text-xs text-primary rounded border border-primary/30 px-2 py-0.5">
                     {route.rails[index]}
                   </span>
                   <ArrowRight className="h-3 w-3 text-muted-foreground" />

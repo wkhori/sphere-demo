@@ -112,7 +112,7 @@ export function AccountsTable({
       <div className="mt-6 overflow-hidden rounded-xl border border-border/60">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-primary/5">
               <TableHead>Account</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Network/Bank</TableHead>
