@@ -98,8 +98,7 @@ function ColorField({
 }
 
 export function BrandControlsPanel() {
-  const { brand, updateBrand, setBrand, mode, setMode, allowDarkMode } =
-    useBrand();
+  const { brand, updateBrand, setBrand } = useBrand();
   const [copied, setCopied] = React.useState(false);
 
   const handleExport = () => {
@@ -239,7 +238,7 @@ export function BrandControlsPanel() {
             className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-border/40 bg-muted transition-colors aria-checked:bg-primary"
           >
             <span
-              className="pointer-events-none inline-block size-3.5 rounded-full bg-background shadow-sm transition-transform translate-x-0.5 aria-checked:translate-x-[18px]"
+              className="pointer-events-none inline-block size-3.5 rounded-full bg-background shadow-sm transition-transform translate-x-0.5 aria-checked:translate-x-4.5"
               aria-checked={brand?.allowDarkMode !== false}
             />
           </button>
