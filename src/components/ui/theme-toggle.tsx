@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useBrand } from "@/components/brand-provider";
 
 export function ThemeToggle() {
-  const { mode, setMode, allowDarkMode } = useBrand();
+  const { mode, setMode, allowDarkMode, hydrated } = useBrand();
 
   // Hide toggle entirely when tenant disables dark mode
   if (!allowDarkMode) return null;
@@ -23,6 +23,7 @@ export function ThemeToggle() {
       onClick={cycleTheme}
       aria-label={label}
       title={label}
+      className={`transition-opacity duration-150 ${hydrated ? "opacity-100" : "opacity-0"}`}
     >
       {mode === "dark" ? (
         <Moon className="size-4" />

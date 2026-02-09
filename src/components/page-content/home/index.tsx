@@ -128,19 +128,28 @@ export function HomeContent({
       <AnimatePresence>
         {!bannerDismissed && onThemeSettings && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
-            <div className="flex items-center gap-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
+            <div className="flex items-center gap-4 rounded-lg border border-primary/25 bg-linear-to-r from-primary/8 via-primary/4 to-transparent px-4 py-3">
+              <motion.div
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20"
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
                 <Sparkles className="size-4 text-primary" />
-              </div>
+              </motion.div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
+                  <span className="relative overflow-hidden rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
                     New
+                    <span className="absolute inset-0 -translate-x-full animate-[shimmer_2.5s_ease-in-out_infinite] bg-linear-to-r from-transparent via-white/25 to-transparent" />
                   </span>
                   <p className="text-sm font-medium">
                     Theme customization is here

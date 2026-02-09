@@ -31,6 +31,9 @@ interface BrandContextValue {
 
   /** Whether dark mode is allowed by the current brand config. */
   allowDarkMode: boolean;
+
+  /** True once localStorage has been read. Use to avoid FOUC. */
+  hydrated: boolean;
 }
 
 const BrandContext = React.createContext<BrandContextValue | null>(null);
@@ -84,6 +87,7 @@ function applyMode(mode: Mode) {
 export function BrandProvider({ children }: { children: React.ReactNode }) {
   const [brand, setBrandState] = React.useState<BrandConfig | null>(null);
   const [mode, setModeState] = React.useState<Mode>("light");
+  const [hydrated, setHydrated] = React.useState(false);
 
   // Track currently-applied CSS vars so we can clean them up on change
   const appliedVarsRef = React.useRef<Record<string, string>>({});
@@ -97,6 +101,7 @@ export function BrandProvider({ children }: { children: React.ReactNode }) {
     setModeState(storedMode);
     applyMode(storedMode);
     appliedVarsRef.current = applyBrandConfig(storedBrand, storedMode);
+    setHydrated(true);
 
     // Cross-tab sync
     const handleStorage = (e: StorageEvent) => {
@@ -220,8 +225,8 @@ export function BrandProvider({ children }: { children: React.ReactNode }) {
   const allowDarkMode = brand?.allowDarkMode !== false;
 
   const value = React.useMemo<BrandContextValue>(
-    () => ({ brand, mode, updateBrand, setBrand, setMode, allowDarkMode }),
-    [brand, mode, updateBrand, setBrand, setMode, allowDarkMode],
+    () => ({ brand, mode, updateBrand, setBrand, setMode, allowDarkMode, hydrated }),
+    [brand, mode, updateBrand, setBrand, setMode, allowDarkMode, hydrated],
   );
 
   return (

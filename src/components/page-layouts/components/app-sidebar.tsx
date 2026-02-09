@@ -73,7 +73,7 @@ export function AppSidebar({
   activeNav?: string;
 }) {
   const { isMobile, setOpenMobile } = useSidebar();
-  const { brand } = useBrand();
+  const { brand, hydrated } = useBrand();
 
   const handleProfileSelect = () => {
     onProfileSelect?.();
@@ -87,7 +87,7 @@ export function AppSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-2.5 px-1 py-1.5">
+            <div className={`flex items-center gap-2.5 px-1 py-1.5 transition-opacity duration-150 ${hydrated ? "opacity-100" : "opacity-0"}`}>
               <BrandLogo size="lg" />
               {!brand?.logoUrl && (
                 <span className="truncate text-sm font-semibold leading-tight">

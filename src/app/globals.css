@@ -205,3 +205,12 @@
 .animate-rate-refresh {
   animation: rate-refresh 4s linear infinite;
 }
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
