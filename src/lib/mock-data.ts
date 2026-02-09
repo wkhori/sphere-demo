@@ -182,10 +182,10 @@ export const mockAccounts: Account[] = [
   },
 ];
 
-// All accounts: original 12 + 1000 generated
+// All accounts: original 12 + 10000 generated
 export const allMockAccounts: Account[] = [
   ...mockAccounts,
-  ...generateMockAccounts(1000),
+  ...generateMockAccounts(10000),
 ];
 
 // Home page mock data
