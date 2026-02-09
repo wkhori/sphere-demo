@@ -2,7 +2,9 @@
 
 import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles, X, TrendingDown, TrendingUp } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedNumber } from "@/components/motion-primitives/animated-number";
 import {
@@ -62,9 +64,12 @@ const buildRepeatPrefill = (
   return { from: from ?? undefined, to, amount };
 };
 
+const BANNER_DISMISSED_KEY = "theme-banner-dismissed";
+
 export function HomeContent({
   onNavigate,
   onRepeatLast,
+  onThemeSettings,
 }: {
   onNavigate: (view: "send" | "accounts") => void;
   onRepeatLast?: (prefill: {
@@ -72,7 +77,20 @@ export function HomeContent({
     to?: Account;
     amount: number;
   }) => void;
+  onThemeSettings?: () => void;
 }) {
+  const [bannerDismissed, setBannerDismissed] = React.useState(true);
+
+  React.useEffect(() => {
+    setBannerDismissed(
+      localStorage.getItem(BANNER_DISMISSED_KEY) === "true",
+    );
+  }, []);
+
+  const dismissBanner = () => {
+    setBannerDismissed(true);
+    localStorage.setItem(BANNER_DISMISSED_KEY, "true");
+  };
   const selfAccounts = React.useMemo(
     () => mockAccounts.filter((account) => account.ownership === "self"),
     [],
@@ -107,6 +125,53 @@ export function HomeContent({
   const momPositive = momDelta >= 0;
   return (
     <div className="space-y-10">
+      <AnimatePresence>
+        {!bannerDismissed && onThemeSettings && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            <div className="flex items-center gap-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <Sparkles className="size-4 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
+                    New
+                  </span>
+                  <p className="text-sm font-medium">
+                    Theme customization is here
+                  </p>
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Match the dashboard look and feel to your brand.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => {
+                  dismissBanner();
+                  onThemeSettings();
+                }}
+              >
+                Explore
+                <ArrowRight className="size-3.5" />
+              </Button>
+              <button
+                type="button"
+                onClick={dismissBanner}
+                className="shrink-0 rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-bold">

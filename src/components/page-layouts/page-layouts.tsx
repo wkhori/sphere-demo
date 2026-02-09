@@ -114,6 +114,7 @@ export default function Page() {
             <HomeContent
               onNavigate={handleHomeNavigate}
               onRepeatLast={handleRepeatLast}
+              onThemeSettings={() => setActiveView("theme")}
             />
           )}
         </div>
