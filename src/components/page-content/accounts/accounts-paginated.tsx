@@ -25,6 +25,7 @@ import { columns } from "./columns";
 import { COL_WIDTHS, TABLE_MIN_WIDTH } from "./shared";
 
 export function AccountsPaginated({ data }: { data: Account[] }) {
+  "use no memo";
   const { onViewDetails } = useAccountsContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
 

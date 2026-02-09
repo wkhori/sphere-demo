@@ -18,6 +18,7 @@ const ROW_HEIGHT = 53;
 const OVERSCAN = 15;
 
 export function AccountsVirtualized({ data }: { data: Account[] }) {
+  "use no memo";
   const { onViewDetails } = useAccountsContext();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const scrollRef = React.useRef<HTMLDivElement>(null);
