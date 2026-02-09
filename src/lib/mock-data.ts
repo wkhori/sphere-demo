@@ -6,6 +6,7 @@ import {
   PayoutNetwork,
   UserProfile,
 } from "./types";
+import { generateMockAccounts } from "./generate-accounts";
 
 // MOCK ACCOUNTS
 export const mockAccounts: Account[] = [
@@ -179,6 +180,12 @@ export const mockAccounts: Account[] = [
     createdAt: new Date("2024-11-10"),
     lastUsedAt: new Date("2026-01-18"),
   },
+];
+
+// All accounts: original 12 + 1000 generated
+export const allMockAccounts: Account[] = [
+  ...mockAccounts,
+  ...generateMockAccounts(1000),
 ];
 
 // Home page mock data
