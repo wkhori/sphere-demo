@@ -1,12 +1,10 @@
 "use client";
 
 import * as React from "react";
-
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
 import { AppSidebar } from "./components/app-sidebar";
 import { AppHeader } from "./components/app-header";
-import { AccountsTable } from "@/components/page-content/accounts-table";
+import { AccountsView } from "@/components/page-content/accounts";
 import { HomeContent } from "@/components/page-content/home";
 import { ProfileDetails } from "@/components/page-content/profile-details";
 import { SendMoney } from "@/components/page-content/send-money";
@@ -85,8 +83,7 @@ export default function Page() {
       />
       <SidebarInset>
         <AppHeader
-          parentLabel={null}
-          currentLabel={
+          label={
             activeView === "profile"
               ? "Account Details"
               : activeView === "accounts"
@@ -105,7 +102,7 @@ export default function Page() {
               onThemeSettings={() => setActiveView("theme")}
             />
           ) : activeView === "accounts" ? (
-            <AccountsTable onSelectAccount={handleAccountSelect} />
+            <AccountsView onSelectAccount={handleAccountSelect} />
           ) : activeView === "send" ? (
             <SendMoney prefill={sendPrefill} onNavigate={handleSendNavigate} />
           ) : activeView === "theme" ? (
